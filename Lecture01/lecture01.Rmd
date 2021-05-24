@@ -1,0 +1,366 @@
+---
+title: "AMSI Winter </br> School 2021"
+subtitle: "Dimension Reduction"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"css/mtheme.css","css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(gifski)
+```
+
+class: center, middle, inverse
+
+# Motivation
+
+---
+
+# Finding structure
+
+- Examples
+- Simple structure from high-dimensional data
+
+---
+
+class: center, middle, inverse
+
+# Principal Components Analysis
+
+---
+
+# Explaining Variance
+
+- Let there be $n$ observations of $p$ variables; $x_{ij}$ denotes observation $i$ and variable $j$.
+--
+
+- Find some linear combination of variables that has maximal variance.
+--
+
+- Find $w_1,w_2,\dots,w_p$ such that
+
+$$c_i=w_1x_{i1}+w_2x_{i2}+\dots w_px_{ip}$$
+has the biggest possible variance.
+--
+This is called the first principal component (PC).
+
+
+---
+
+# More PCs
+
+- After finding the first principal component can look for a linear combination that
+--
+
+  + Has maximum variance
+  + Is uncorrelated with the first PC
+--
+
+- This is called the second principal component
+--
+
+- This continues until there are as many PCs as variables.
+
+
+---
+
+
+# No cheating...
+
+- Arbitrarily big weights
+--
+$\rightarrow$ arbitrarily big variance.
+--
+
+  + Constrain $\sum w_j=1$
+--
+
+- Sensitive to units of measurement.
+--
+
+  + Center all variables by subtracting the mean.
+  + Standardise all variables to have unit variance.
+  
+---
+
+# An example
+
+```{r,message=F,echo=F}
+
+library(tidyverse)
+
+wb<-read_csv('data/WorldBank.csv',na = '..',n_max = 43617)
+
+wb%>%
+  filter(!(`Country Name`%in%c('India','China')))%>%
+  select(`Country Name`,`Country Code`,Series=`Series Code`,Value=`2015 [YR2015]`)%>%
+  pivot_wider(id_cols = 1:2,names_from = Series,values_from=Value)->wb_rs
+
+mis<-apply(wb_rs,2,function(x){sum(is.na(x))})
+
+k<-50
+
+wb_sel<-wb_rs[,(mis<k)]
+
+wb_clean<-wb_sel[complete.cases(wb_sel),]
+
+write_csv(wb_clean,'data/WorldBankClean.csv')
+
+```
+
+- Data obtained from the World Bank for 132 countries and 67 variables.
+--
+
+- Variables include:
+--
+
+  + Health indicators and life expectancy
+  + Technology adoption
+  + Education rates
+  + Economic indicators 
+--
+
+- Some variables and observations removed to reduce missing data.
+
+---
+
+# Data
+
+```{r,message=F,echo=F}
+library(knitr)
+library(kableExtra)
+wb<-read_csv('data/WorldBankClean.csv')
+kable(wb,format = 'html')%>%
+  kable_styling(font_size = 9,bootstrap_options = c("striped","hover","condensed"))%>%
+  scroll_box(height="400px")
+
+```
+
+For more on data LINK
+
+---
+
+# Implementation
+
+R Code to implement PCA
+--
+
+```{r,message=F,echo=T}
+library(tidyverse)
+library(broom)
+wb<-read_csv('data/WorldBankClean.csv')
+wb%>%
+  select_if(.,is.numeric)%>% #Use numeric data
+  scale()%>% #Standardise
+  prcomp()->pca #Compute PCs
+wbPC<-augment(pca,wb) #Add PCs to dataframe
+
+```
+
+---
+
+# Plot
+
+```{r,message=F,echo=F,eval=T,message=F,warning=F}
+library(plotly)
+library(widgetframe)
+
+wbPC%>%
+  ggplot(aes(x=.fittedPC1,y=.fittedPC2,label=`Country Code`,text=`Country Name`))+geom_point(size=0.2)+
+  geom_text(size=3,nudge_x=0.1)+xlab('Principal Component 1')+ylab('Principal Component 2')->g1
+
+ggplotly(g1,dynamicTicks = T,tooltip="text")%>%
+  frameWidget(width="100%",height="100%")
+
+```
+
+---
+
+# Uncovering Structure
+
+- Countries towards the right tend to be more economically developed.
+--
+
+- Countries towards the bottom tend to be larger in population.
+--
+
+- Countries that are similar to one another are closer together on the plot.
+
+---
+class: middle, center, inverse
+
+# PCA: The Algebra
+
+---
+
+# PCA as optimisation
+
+- LC given by $\mathbf{c}=\mathbf{X}\mathbf{w}$
+--
+
+- Variance of LC: $\frac{1}{n-1}\sum_{i=1}^n c^2_i=\frac{1}{n-1}\mathbf{c}'\mathbf{c}$
+--
+
+- Optimisation problem is
+$$\underset{\mathbf{w}}{argmax}\,\frac{1}{n-1}\mathbf{w}'\mathbf{X}'\mathbf{X}\mathbf{w}$$
+
+subject to $\mathbf{w}'\mathbf{w}=1$
+--
+
+- Replace $\mathbf{S}=\frac{1}{n-1}\mathbf{X}'\mathbf{X}$
+---
+
+# Solution
+
+- Lagrangian is
+
+$$\mathcal{L}=\mathbf{w}'\mathbf{S}\mathbf{w}-\lambda(\mathbf{w}'\mathbf{w}-1)$$
+--
+
+- First order conditions
+
+$$\frac{\partial\mathcal{L}}{\partial{\mathbf{w}}}=2\mathbf{S}\mathbf{w}-2\lambda\mathbf{w}$$
+--
+
+- Need to find $\mathbf{w}$ to satisfy
+
+$$\mathbf{S}\mathbf{w}=\lambda\mathbf{w}$$
+---
+
+# Eigenvalue Decomposition
+
+- Solutions are given by the eigenvalue decomposition.
+--
+
+- There are multiple solutions. The eigenvector corresponding to the largest eigenvalue gives the weights of the first principal component.
+--
+
+- The eigenvector corresponding the the second largest eigenvalue gives the weights of the second principal component.
+--
+
+- And so on...
+
+---
+
+class: inverse, middle, center
+
+# PCA: The geometry
+
+---
+
+# Rotations
+
+- A matrix of eigenvectors $\mathbf{W}$ is a rotation matrix
+--
+  
+  + Columns/rows are orthogonal
+  + Columns/rows have unit length
+--
+
+- Multiplying a vector by rotation matrix literally rotates that vector.
+
+---
+
+# Rotation is PCA
+
+- Principal components given by $\mathbf{C}=\mathbf{X}\mathbf{W}$
+--
+
+- Each observation (row of $\mathbf{X}$) is rotated to new components
+--
+
+- This is best seen with a simple example
+
+---
+
+# A simple case
+
+```{r,echo=F,fig.height=5.5}
+
+
+wb%>%
+  select(IT.NET.USER.ZS,SH.ANM.NPRG.ZS)%>%
+  scale()->wbsimp #Use numeric data
+wbsimp%>% #Standardise
+  prcomp()->pca #Compute PCs
+wbsimpPC<-augment(pca,wbsimp) #Add PCs to dataframe
+
+ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()
+```
+
+IT.NET.USER.ZS = No. people using internet
+SH.ANM.NPRG.ZS = Prev. anaemia non-preg.
+
+---
+
+# Components
+
+```{r,echo=F,fig.height=5.5}
+
+
+ggplot(wbsimpPC,aes(x=.fittedPC1,y=-.fittedPC2))+geom_point()+xlab('Principal Component 1')+ylab('Principal Component 2')
+```
+
+---
+
+# Animation
+
+```{r anim, echo=FALSE,animation.hook='gifski',interval=0.2}
+
+theta<--pi/4
+steps<-20
+theta_inc<-seq(0,theta,length.out = steps)
+for (i in 1:steps){
+  rot<-matrix(c(cos(theta_inc[i]),-sin(theta_inc[i]),sin(theta_inc[i]),cos(theta_inc[i])),2,2)
+  wbtmp<-mutate(wbsimpPC,c1=rot[1,1]*IT.NET.USER.ZS+rot[1,2]*SH.ANM.NPRG.ZS,c2=rot[2,1]*IT.NET.USER.ZS+rot[2,2]*SH.ANM.NPRG.ZS)
+  plot(wbtmp$c1,wbtmp$c2,pch=19,xlab='',ylab='',xlim = c(-3,3),ylim = c(-3,3))
+}
+
+```
+
+---
+
+# Or as new coordinates
+
+```{r,echo=F,fig.height=5.5}
+
+ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+xlab('Principal Component 1')+ylab('Principal Component 2')+coord_fixed()
+
+```
+
+---
+
+# Or as new coordinates
+
+```{r,echo=F,fig.height=5.5}
+
+ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+xlab('Principal Component 1')+ylab('Principal Component 2')+geom_abline(slope=-1,intercept = 0,col='blue')+geom_abline(slope=1,intercept = 0,col='green')+coord_fixed()
+
+
+```
+
+---
+
+# Summary
+
+- PCA can be thought of as:
+--
+
+  + Compressing data with matrix decompositions.
+  + Rotating the data
+  + Constructing new coordinates
+  + Projecting onto a low-dimensional plane.
+--
+
+- All of these intutions are useful.

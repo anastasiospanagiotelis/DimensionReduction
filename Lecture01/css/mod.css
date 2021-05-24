@@ -1,0 +1,95 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans,400,700,400italic);
+
+.emphcol{color: #e64626;}
+a, a > code {
+  color: #e64626;
+  text-decoration: none;
+}
+
+code.r{ /* Code block */
+    font-size: 24px;
+}
+.large {
+  font-size: 200%;
+}
+
+.mjx-chtml{ font-size: 100%; }
+
+ol {
+  list-style: none;
+}
+
+ul {
+  list-style: none;
+}
+li::before {content: "\25AA"; 
+  color: #808080; 
+  display: inline-block; 
+  width: 1em;
+  margin-left: -1em;
+}
+
+
+.remark-slide-content {
+  font-family: 'Verdana', sans-serif;
+  font-size: 200%;
+  border-top: 80px solid #e64626;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+.remark-slide-content h1, h2, h3{
+  font-family: 'Verdana', sans-serif;
+  color: #FFFFFF;
+}
+
+.inverse {
+  background-color: #e64626;
+  color: #FFFFFF;
+  border-top: none;
+}
+
+.inverse h1, h2, h3{
+  color: #FFFFFF;
+}
+
+
+.title-slide {
+  font-family: 'Verdana', sans-serif;
+  color: #FFFFFF;
+  border-top: none;
+  background-image: url(SydneyTitleSlide.svg);
+  background-size: cover;
+}
+
+.title-slide > h1 {
+  color: #FFFFFF;
+  font-size: 50px;
+  margin-top: -225px;
+  margin-left: -24px;
+}
+
+.title-slide > h2 {
+  color: #000000;
+  margin-left: -24px;
+}
+
+.title-slide > h3 {
+  color: #000000;
+  margin-left: -24px;
+}
+
+.title-slide .remark-slide-number {
+  font-family: 'Verdana', sans-serif;
+  display: none;
+}
+
+.remark-inline-code{
+  background: #FFFFFF;
+  border-radius: 3px;
+  padding: 4px;
+}
+
+.small{
+  font-size: 41%;
+}
