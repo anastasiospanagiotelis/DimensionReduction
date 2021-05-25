@@ -170,6 +170,15 @@ wbPC<-augment(pca,wb) #Add PCs to dataframe
 
 ---
 
+# Scree plot
+
+```{r, echo=F}
+tibble(Variance=pca$sdev^2,Component=1:length(pca$sdev))%>%
+  ggplot(aes(x=Component,y=Variance))+geom_line()+geom_hline(yintercept=1,col='blue')
+```
+
+---
+
 # Plot
 
 ```{r,message=F,echo=F,eval=T,message=F,warning=F}
@@ -251,6 +260,16 @@ $$\mathbf{S}\mathbf{w}=\lambda\mathbf{w}$$
 
 - And so on...
 
+---
+
+# Data compression
+
+- For the eigendecomposition
+
+$$\mathbf{S}=\sum_{j=1}^p \lambda_j\mathbf{w}_j\mathbf{w}_j'$$
+- This can be approximated by
+
+$$\mathbf{S}\approx\sum_{j=1}^{\color{blue}{k}} \lambda_j\mathbf{w}_j\mathbf{w}_j'$$
 ---
 
 class: inverse, middle, center
@@ -335,7 +354,7 @@ for (i in 1:steps){
 
 ```{r,echo=F,fig.height=5.5}
 
-ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+xlab('Principal Component 1')+ylab('Principal Component 2')+coord_fixed()
+ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+coord_fixed()
 
 ```
 
@@ -345,10 +364,31 @@ ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+xlab('Princ
 
 ```{r,echo=F,fig.height=5.5}
 
-ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+xlab('Principal Component 1')+ylab('Principal Component 2')+geom_abline(slope=-1,intercept = 0,col='blue')+geom_abline(slope=1,intercept = 0,col='green')+coord_fixed()
+ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+geom_abline(slope=-1,intercept = 0,col='blue')+geom_abline(slope=1,intercept = 0,col='green')+coord_fixed()
 
 
 ```
+
+First PC projects onto blue line, second PC on to green line.
+
+---
+
+# PCA and Factor Models
+
+- Suppose the data are generated from the following statistical model
+
+$$\mathbf{x}_i=\mathbf{W}\mathbf{c}_i+\boldsymbol{\xi}_i$$
+--
+
+- where
+  + $\mathbf{x}_i$ is a $p\times 1$ data vector, 
+  + $\mathbf{c}_i$ is a $k\times 1$ latent factor,
+  + $\mathbf{W}$ are factor loadings,
+  + $\boldsymbol{\xi}_i$ is a $p\times 1$ error vector.
+--
+
+- This can be estimated using PCs
+
 
 ---
 
@@ -357,10 +397,12 @@ ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+xlab('Princ
 - PCA can be thought of as:
 --
 
-  + Compressing data with matrix decompositions.
-  + Rotating the data
-  + Constructing new coordinates
-  + Projecting onto a low-dimensional plane.
+  + Compressing data with matrix decomposition.
+  + Rotating the data.
+  + Constructing new coordinates.
+  + Projecting onto a low-dimensional hyper-plane.
+  + A technique to estimate latent factors. 
 --
 
-- All of these intutions are useful.
+- All of these intuitions are useful.
+

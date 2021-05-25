@@ -8571,10 +8571,16 @@ wbPC&lt;-augment(pca,wb) #Add PCs to dataframe
 
 ---
 
+# Scree plot
+
+![](lecture01_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+---
+
 # Plot
 
-<div id="htmlwidget-5497187f867351ff4b83" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5497187f867351ff4b83">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-fb99742ce31e8d385ba6" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fb99742ce31e8d385ba6">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-5.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -8644,6 +8650,16 @@ subject to `\(\mathbf{w}'\mathbf{w}=1\)`
 
 ---
 
+# Data compression
+
+- For the eigendecomposition
+
+`$$\mathbf{S}=\sum_{j=1}^p \lambda_j\mathbf{w}_j\mathbf{w}_j'$$`
+- This can be approximated by
+
+`$$\mathbf{S}\approx\sum_{j=1}^{\color{blue}{k}} \lambda_j\mathbf{w}_j\mathbf{w}_j'$$`
+---
+
 class: inverse, middle, center
 
 # PCA: The geometry
@@ -8677,7 +8693,7 @@ class: inverse, middle, center
 
 # A simple case
 
-![](lecture01_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+![](lecture01_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
 
 IT.NET.USER.ZS = No. people using internet
 SH.ANM.NPRG.ZS = Prev. anaemia non-preg.
@@ -8686,7 +8702,7 @@ SH.ANM.NPRG.ZS = Prev. anaemia non-preg.
 
 # Components
 
-![](lecture01_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+![](lecture01_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -8698,13 +8714,34 @@ SH.ANM.NPRG.ZS = Prev. anaemia non-preg.
 
 # Or as new coordinates
 
-![](lecture01_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+![](lecture01_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
 
 ---
 
 # Or as new coordinates
 
-![](lecture01_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+![](lecture01_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+First PC projects onto blue line, second PC on to green line.
+
+---
+
+# PCA and Factor Models
+
+- Suppose the data are generated from the following statistical model
+
+`$$\mathbf{x}_i=\mathbf{W}\mathbf{c}_i+\boldsymbol{\xi}_i$$`
+--
+
+- where
+  + `\(\mathbf{x}_i\)` is a `\(p\times 1\)` data vector, 
+  + `\(\mathbf{c}_i\)` is a `\(k\times 1\)` latent factor,
+  + `\(\mathbf{W}\)` are factor loadings,
+  + `\(\boldsymbol{\xi}_i\)` is a `\(p\times 1\)` error vector.
+--
+
+- This can be estimated using PCs
+
 
 ---
 
@@ -8713,13 +8750,14 @@ SH.ANM.NPRG.ZS = Prev. anaemia non-preg.
 - PCA can be thought of as:
 --
 
-  + Compressing data with matrix decompositions.
-  + Rotating the data
-  + Constructing new coordinates
-  + Projecting onto a low-dimensional plane.
+  + Compressing data with matrix decomposition.
+  + Rotating the data.
+  + Constructing new coordinates.
+  + Projecting onto a low-dimensional hyper-plane.
+  + A technique to estimate latent factors. 
 --
 
-- All of these intutions are useful.
+- All of these intuitions are useful.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
