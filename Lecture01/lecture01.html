@@ -24,9 +24,28 @@ class: center, middle, inverse, title-slide
 
 ---
 
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: {
+    Macros: {
+      bx: "{\\mathbf{x}}",
+      bX: "{\\mathbf{X}}",
+      by: "{\\mathbf{y}}",
+      bY: "{\\mathbf{Y}}",
+      bw: "{\\mathbf{w}}",
+      bW: "{\\mathbf{W}}",
+      bS: "{\\mathbf{S}}",
+      calL: "{\\mathcal{L}}",
+      bbR: "{\\mathbb{R}}"
+    }
+  }
+});
+</script>
 
 
 
+
+---
 
 class: center, middle, inverse
 
@@ -57,7 +76,7 @@ class: center, middle, inverse
 
 - Find `\(w_1,w_2,\dots,w_p\)` such that
 
-`$$c_i=w_1x_{i1}+w_2x_{i2}+\dots w_px_{ip}$$`
+`$$y_i=w_1x_{i1}+w_2x_{i2}+\dots w_px_{ip}$$`
 has the biggest possible variance.
 --
 This is called the first principal component (PC).
@@ -8579,8 +8598,8 @@ wbPC&lt;-augment(pca,wb) #Add PCs to dataframe
 
 # Plot
 
-<div id="htmlwidget-fb99742ce31e8d385ba6" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fb99742ce31e8d385ba6">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-5.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-3f4c4a7fd44977a0bc6c" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3f4c4a7fd44977a0bc6c">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-5.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -8593,6 +8612,9 @@ wbPC&lt;-augment(pca,wb) #Add PCs to dataframe
 --
 
 - Countries that are similar to one another are closer together on the plot.
+--
+
+- A small number of `\(m&lt;&lt;p\)` PCs is sufficient to explain a large proportion of variance.
 
 ---
 class: middle, center, inverse
@@ -8603,36 +8625,36 @@ class: middle, center, inverse
 
 # PCA as optimisation
 
-- LC given by `\(\mathbf{c}=\mathbf{X}\mathbf{w}\)`
+- LC given by `\(\by=\bX\bw\)`
 --
 
-- Variance of LC: `\(\frac{1}{n-1}\sum_{i=1}^n c^2_i=\frac{1}{n-1}\mathbf{c}'\mathbf{c}\)`
+- Variance of LC: `\(\frac{1}{n-1}\sum_{i=1}^n y^2_i=\frac{1}{n-1}\by'\by\)`
 --
 
 - Optimisation problem is
-`$$\underset{\mathbf{w}}{argmax}\,\frac{1}{n-1}\mathbf{w}'\mathbf{X}'\mathbf{X}\mathbf{w}$$`
+`$$\underset{\bw}{argmax}\,\frac{1}{n-1}\bw'\bX'\bX\bw$$`
 
-subject to `\(\mathbf{w}'\mathbf{w}=1\)`
+subject to `\(\bw'\bw=1\)`
 --
 
-- Replace `\(\mathbf{S}=\frac{1}{n-1}\mathbf{X}'\mathbf{X}\)`
+- Replace `\(\bS=\frac{1}{n-1}\bX'\bX\)`
 ---
 
 # Solution
 
 - Lagrangian is
 
-`$$\mathcal{L}=\mathbf{w}'\mathbf{S}\mathbf{w}-\lambda(\mathbf{w}'\mathbf{w}-1)$$`
+`$$\calL=\bw'\bS\bw-\lambda(\bw'\bw-1)$$`
 --
 
 - First order conditions
 
-`$$\frac{\partial\mathcal{L}}{\partial{\mathbf{w}}}=2\mathbf{S}\mathbf{w}-2\lambda\mathbf{w}$$`
+`$$\frac{\partial\calL}{\partial{\bw}}=2\bS\bw-2\lambda\bw$$`
 --
 
 - Need to find `\(\mathbf{w}\)` to satisfy
 
-`$$\mathbf{S}\mathbf{w}=\lambda\mathbf{w}$$`
+`$$\bS\bw=\lambda\bw$$`
 ---
 
 # Eigenvalue Decomposition
@@ -8654,10 +8676,10 @@ subject to `\(\mathbf{w}'\mathbf{w}=1\)`
 
 - For the eigendecomposition
 
-`$$\mathbf{S}=\sum_{j=1}^p \lambda_j\mathbf{w}_j\mathbf{w}_j'$$`
+`$$\bS=\sum_{j=1}^p \lambda_j\bw_j\bw_j'$$`
 - This can be approximated by
 
-`$$\mathbf{S}\approx\sum_{j=1}^{\color{blue}{k}} \lambda_j\mathbf{w}_j\mathbf{w}_j'$$`
+`$$\bS\approx\sum_{j=1}^{\color{blue}{m}} \lambda_j\bw_j\bw_j'$$`
 ---
 
 class: inverse, middle, center
@@ -8668,7 +8690,7 @@ class: inverse, middle, center
 
 # Rotations
 
-- A matrix of eigenvectors `\(\mathbf{W}\)` is a rotation matrix
+- A matrix of eigenvectors `\(\bW\)` is a rotation matrix
 --
   
   + Columns/rows are orthogonal
@@ -8681,10 +8703,10 @@ class: inverse, middle, center
 
 # Rotation is PCA
 
-- Principal components given by `\(\mathbf{C}=\mathbf{X}\mathbf{W}\)`
+- Principal components given by `\(\bY=\bX\bW\)`
 --
 
-- Each observation (row of `\(\mathbf{X}\)`) is rotated to new components
+- Each observation (row of `\(\bX\)`) is rotated to new components
 --
 
 - This is best seen with a simple example
@@ -8730,13 +8752,13 @@ First PC projects onto blue line, second PC on to green line.
 
 - Suppose the data are generated from the following statistical model
 
-`$$\mathbf{x}_i=\mathbf{W}\mathbf{c}_i+\boldsymbol{\xi}_i$$`
+`$$\bx_i=\mathbf{A}\by_i+\boldsymbol{\xi}_i$$`
 --
 
 - where
   + `\(\mathbf{x}_i\)` is a `\(p\times 1\)` data vector, 
-  + `\(\mathbf{c}_i\)` is a `\(k\times 1\)` latent factor,
-  + `\(\mathbf{W}\)` are factor loadings,
+  + `\(\mathbf{y}_i\)` is a `\(m\times 1\)` latent factor,
+  + `\(\mathbf{A}\)` are factor loadings,
   + `\(\boldsymbol{\xi}_i\)` is a `\(p\times 1\)` error vector.
 --
 
@@ -8758,6 +8780,55 @@ First PC projects onto blue line, second PC on to green line.
 --
 
 - All of these intuitions are useful.
+
+---
+
+class: inverse, middle, center
+
+# Multidimensional Scaling (MDS)
+
+---
+
+#The idea
+
+- Input points: `\(\bx_i\in\bbR^p\)` for `\(i=1,\dots,n\)` 
+- Output points: `\(\by_i\in\bbR^m\)` for `\(i=1,\dots,n\)`
+  + `\(m&lt;&lt;p\)`
+--
+
+- Denote distance between `\(\bx_i\)` and `\(\bx_j\)` as `\(\delta_{ij}\)`.
+--
+
+- Denote distance between `\(\by_i\)` and `\(\by_j\)` as `\(d_{ij}\)`.
+--
+
+- Want `\(\delta_{ij}\)` to be similar to `\(d_{ij}\)`.
+
+
+---
+
+# Strain
+
+- Assume Euclidean distances 
+--
+for now!
+--
+
+- Objective is to minimise strain defined as:
+
+`$$\sum\limits_{i=1}^{n-1}\sum\limits_{j=i+1}^n (\delta_{ij}^2-d_{ij}^2)$$`
+--
+
+- How can we solve this?
+
+---
+
+# Solution
+
+1. Double Center
+2. Eigenvalue Decomposition
+
+---
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
