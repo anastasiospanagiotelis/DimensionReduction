@@ -652,7 +652,7 @@ ggplotly(g1,tooltip = 'text')%>%frameWidget()
 
 ---
 
-# Road distances
+# Road Distances
 
 - Suppose that we have the road distances between different cities in Australia.
 --
@@ -669,6 +669,7 @@ ggplotly(g1,tooltip = 'text')%>%frameWidget()
 
 # Road Distances
 
+Road distances between Australian cities.
 
 ```{r setd,echo=FALSE}
 dm<-matrix(c(
@@ -691,8 +692,7 @@ attributes(doz)$Labels<-c("Cairns",
                          "Perth",
                          "Darwin",
                          "Alice Springs")                  
-kable(as.matrix(doz))%>% kable_styling(bootstrap_options = c("striped","hover","condensed"),font_size = 12)%>%
-  scroll_box(height="500px")
+kable(as.matrix(doz))%>% kable_styling(bootstrap_options = c("striped","hover","condensed"),font_size = 14)
 ```
 
 ---
@@ -727,7 +727,7 @@ coords<-data_frame(city=c("Sydney",
                  -23.6980,
                  -12.463440)
            )
-g<-ggmap(oz)+geom_text(data=coords,aes(x=lng, y=lat,label=city),size=8,nudge_y = 1.5)+geom_point(data=coords,aes(x=lng, y=lat),size=6)
+g<-ggmap(oz)+geom_text_repel(data=coords,aes(x=lng, y=lat,label=city),size=8)+geom_point(data=coords,aes(x=lng, y=lat),size=6)
 g
 ```
 
@@ -742,7 +742,7 @@ dozout%>%
   as.data.frame()%>%
   rownames_to_column("city")->
   ozmdsout
-ggplot(ozmdsout,aes(x=lng,y=lat,label=city))+geom_text(size=8)+coord_cartesian(xlim=c(-3500,3000))
+ggplot(ozmdsout,aes(x=lng,y=lat,label=city))+geom_text_repel(size=8)+geom_point()+coord_cartesian(xlim=c(-3500,3000))
 ```
 
 ---
@@ -762,14 +762,16 @@ dozout%>%
   as.data.frame()%>%
   rownames_to_column("city")->
   ozmdsout
-ggplot(ozmdsout,aes(x=lng,y=lat,label=city))+geom_text(size=8)+coord_cartesian(xlim=c(115,156))
+ggplot(ozmdsout,aes(x=lng,y=lat,label=city))+geom_text_repel(size=8)+geom_point()+coord_cartesian(xlim=c(115,156))
+
 ```
+
 ---
 
 # Back with Map
 
-```{r, mdssolmap,echo=FALSE,eval=TRUE}
-ggmap(oz)+geom_text(data=ozmdsout,aes(x=lng, y=lat,label=city),size=8,nudge_y = 1.5)+geom_point(data=ozmdsout,aes(x=lng, y=lat),size=6)
+```{r, mdssolmap,echo=FALSE,eval=TRUE,warning=F,message=F}
+ggmap(oz)+geom_text_repel(data=ozmdsout,aes(x=lng, y=lat,label=city),size=8)+geom_point(data=ozmdsout,aes(x=lng, y=lat),size=6)
 ```
 
 
@@ -780,5 +782,158 @@ class: inverse, middle, center
 
 ---
 
-# A different objective
+# Beyond Classical MDS
 
+- Classical MDS is designed to minimise Strain.
+--
+
+- An alternative  objective function called Stress can be minimised instead
+--
+
+
+$$\mbox{Stress}=\sum\limits_{i=1}^{n-1}\sum\limits_{j>i}\frac{(\delta_{ij}-d_{ij})^2}{\delta_{ij}}$$
+--
+
+- The difference between $\delta_{ij}$ and $d_{ij}$ acts like an error.
+--
+
+- The $\delta_{ij}$ on the denominator acts as a weight
+
+---
+
+#Weighting
+
+- For large $\delta$ observations are far away in the input space.
+--
+
+  - For these pairs errors are more easily tolerated.
+--
+
+- For small $\delta$ observations are close in the input space.
+--
+
+  - For these pairs errors are not tolerated.
+--
+
+- The most accuracy is achieved for nearby points
+--
+
+- The local structure is preserved.
+
+---
+
+# Sammon mapping
+
+- The Sammon mapping is solved by numerical optimisation (gradient descent).
+--
+
+- It is different from the classical solution
+--
+
+  - It is not based on an eigenvalue decomposition
+--
+
+  - It is not based on rotation
+--
+
+  - It is a non-linear mapping.
+
+---
+
+# Example
+
+- The following is a simulated toy example to motivate non-linear dimension reduction.
+--
+
+- Consider the case where input points are 2D and the output points are 1D.
+--
+
+- The specific problem of doing multidimensional scaling where the lower dimension is 1 is called *seriation*.
+
+---
+
+# Original Data
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
+library(MASS)
+set.seed(1)
+xg<-seq(0,1,0.005)
+signal<-1.2*sin((2*pi*xg)/2)
+yg<-signal+0.01*rnorm(length(xg))
+raw<-cbind(xg,yg)
+theta<-pi/4
+rotm<-matrix(c(cos(theta),-sin(theta),sin(theta),cos(theta)),2,2)
+rot<-raw%*%rotm
+dd<-dist(rot)
+pca<-prcomp(rot)
+cmds<-cmdscale(dd,k = 1)
+smds<-sammon(dd,k=1,trace = FALSE)
+smds<-sammon(dd,y = matrix(-xg,ncol = 1),k=1,trace = FALSE)
+df<-tibble(rank=xg,
+           x=-rot[,1],
+           y=rot[,2],
+           classic=cmds,
+           sammon=smds$points,
+           xrot=pca$x[,1],
+           yrot=pca$x[,2])
+ggplot(df,aes(x=x,y=y))+geom_point()+coord_fixed()
+```
+
+---
+
+# Original Data
+
+```{r,echo=FALSE}
+ggplot(df,aes(x=x,y=y,col=rank))+geom_point()+scale_color_viridis_c()+coord_fixed()
+```
+
+---
+
+# Rotate (Classical Solution)
+
+```{r,echo=FALSE}
+ggplot(df,aes(x=xrot,y=yrot,col=rank))+geom_point()+scale_color_viridis_c()+coord_fixed()
+```
+
+---
+
+# Keep 1 Dimension
+
+```{r,echo=FALSE}
+ggplot(df,aes(x=classic,y=0,col=rank))+geom_point()+scale_color_viridis_c()
+```
+
+
+---
+
+# Rug plot (classical solution)
+
+```{r,echo=FALSE}
+ggplot(df,aes(x=classic,col=rank))+geom_rug()+scale_color_viridis_c()
+```
+
+
+---
+
+# Sammon Mapping
+
+```{r,echo=FALSE}
+ggplot(df,aes(x=sammon,col=rank))+geom_rug()+scale_color_viridis_c()
+```
+
+---
+
+# Discussion
+
+- Classical MDS cannot account for non-linearity.
+  + The dark blue and yellow points are represented as close to one another.
+--
+
+- Sammon does account for non-linearity.
+  + The blue and yellow points are represented as far apart.
+--
+
+- The Sammon mapping preserves local structure.
+
+
+---
