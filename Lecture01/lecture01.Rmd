@@ -21,6 +21,8 @@ output:
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 library(gifski)
+library(ggrepel)
+library(ggmap)
 ```
 
 ---
@@ -57,6 +59,7 @@ class: center, middle, inverse
 $$y_i=w_1x_{i1}+w_2x_{i2}+\dots w_px_{ip}$$
 has the biggest possible variance.
 --
+
 This is called the first principal component (PC).
 
 
@@ -191,7 +194,7 @@ library(widgetframe)
 
 wbPC%>%
   ggplot(aes(x=.fittedPC1,y=.fittedPC2,label=`Country Code`,text=`Country Name`))+geom_point(size=0.2)+
-  geom_text(size=3,nudge_x=0.1)+xlab('Principal Component 1')+ylab('Principal Component 2')->g1
+  geom_text(size=3,nudge_x=0.1)+xlab('Principal Component 1')+ylab('Principal Component 2')+coord_fixed()->g1
 
 ggplotly(g1,dynamicTicks = T,tooltip="text")%>%
   frameWidget(width="100%",height="100%")
@@ -322,7 +325,7 @@ wbsimp%>% #Standardise
   prcomp()->pca #Compute PCs
 wbsimpPC<-augment(pca,wbsimp) #Add PCs to dataframe
 
-ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()
+ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+coord_fixed()
 ```
 
 IT.NET.USER.ZS = No. people using internet
@@ -335,7 +338,7 @@ SH.ANM.NPRG.ZS = Prev. anaemia non-preg.
 ```{r,echo=F,fig.height=5.5}
 
 
-ggplot(wbsimpPC,aes(x=.fittedPC1,y=-.fittedPC2))+geom_point()+xlab('Principal Component 1')+ylab('Principal Component 2')
+ggplot(wbsimpPC,aes(x=.fittedPC1,y=-.fittedPC2))+geom_point()+xlab('Principal Component 1')+ylab('Principal Component 2')+coord_fixed()
 ```
 
 ---
@@ -451,13 +454,331 @@ for now!
 $$\sum\limits_{i=1}^{n-1}\sum\limits_{j=i+1}^n (\delta_{ij}^2-d_{ij}^2)$$
 --
 
+- This is known as classical MDS
+--
+
 - How can we solve this?
 
 ---
 
 # Solution
 
-1. Double Center
-2. Eigenvalue Decomposition
+1. Construct an $n\times n$ matrix of squared interpoint distances $\bDelta^{(2)}=\left\{\delta^2_{ij}\right\}$
+--
+
+2. Double center $\bDelta^{(2)}$ by computing $\bB=\bH'\bDelta^{(2)}\bH$ where $\bH=\bI-(1/n)\biota\biota'$
+--
+
+3. Find the eigenvalue decomposition of $\bB=\bU\bLambda\bU'$
+--
+
+4. The output coordinates are given by the first $m$ columns of $\bU\bLambda^{1/2}$
 
 ---
+
+# Implementation
+
+```{r,message=F,echo=T,warning=F}
+library(tidyverse)
+wb<-read_csv('data/WorldBankClean.csv')
+wb%>%
+  select_if(.,is.numeric)%>% #Use numeric data
+  scale()%>% #Standardise
+  dist()%>% #Compute distance matrix
+  cmdscale()%>% #MDS
+  as_tibble(.name_repair = 'universal')%>%
+  cbind(wb)->wb_mds
+
+```
+
+---
+
+# Plot
+
+```{r,echo=F}
+wb_mds%>%
+  ggplot(aes(x=`...1`,y=`...2`,label=`Country Code`,text=`Country Name`))+geom_point(size=0.2)+
+  geom_text(size=3,nudge_x=0.1)+xlab('Coordinate 1')+ylab('Coordinate 2')+coord_fixed()->g1
+ggplotly(g1,dynamicTicks = T,tooltip="text")%>%
+  frameWidget(width="100%",height="100%")  
+  
+```
+
+---
+
+# Look familiar??
+
+- This is almost identical to Principal Components Analysis
+--
+
+- The axes have been flipped!
+--
+
+- PCA is invariant to reflections.
+--
+Why?
+--
+
+- MDS is also invariant to rotations.
+--
+Why?
+
+---
+
+# Why are they the same?
+
+- Proof is a bit involved.
+--
+
+- The key idea to show that $\bB$ is related to $\bX\bX'$ while $\bS$ is related to $\bX'\bX$
+--
+
+- $\bX'\bX$ and $\bX\bX'$ have the same non-zero eigenvalues.
+--
+
+- Geometrically, the result makes sense by thinking about the extreme case where the data lie on a $m$-dimensional plane.
+
+---
+class:inverse,middle,center
+
+# Beyond Euclidean Distance
+
+---
+
+# Non-Euclidean Distance
+
+- What if a non-Euclidean distance is used?
+--
+
+- In this case classical MDS does not minimise Strain as defined previously.
+--
+
+- It has optimality properties in terms of $\bB$, minimising.
+
+$$\sum$$
+--
+
+- Distances between output points faithfully represent distances between input points.
+
+---
+
+# Implementation (L1)
+
+```{r,message=F,echo=T,warning=F}
+library(tidyverse)
+wb<-read_csv('data/WorldBankClean.csv')
+wb%>%
+  select_if(.,is.numeric)%>% #Use numeric data
+  scale()%>% #Standardise
+  dist(method = 'manhattan')%>% #Compute distance matrix
+  cmdscale()%>% #MDS
+  as_tibble(.name_repair = 'universal')%>%
+  cbind(wb)->wb_mds_L1
+
+```
+
+---
+
+# Plot (L1)
+
+```{r,echo=F,fig.align='center'}
+wb_mds_L1%>%
+  ggplot(aes(x=`...1`,y=-`...2`,label=`Country Code`,text=`Country Name`))+geom_point(size=0.2)+
+  geom_text(size=3,nudge_x = 0.1)+xlab('Coordinate 1')+ylab('Coordinate 2')+coord_fixed()
+  
+```
+
+---
+
+
+# Plot (L2)
+
+```{r,echo=F,fig.align='center'}
+wb_mds%>%
+  ggplot(aes(x=`...1`,y=`...2`,label=`Country Code`,text=`Country Name`))+geom_point(size=0.2)+
+  geom_text(size=3,nudge_x = 0.1)+xlab('Coordinate 1')+ylab('Coordinate 2')+coord_fixed()
+  
+```
+
+---
+
+# Why is this useful?
+
+- We can have distances/dissimilarities between all sorts of objects
+--
+  
+  + Time series
+  + Functions
+  + Probability distributions
+  + Strings/ Texts
+
+---
+
+# A toy example
+
+- Consider the word for "mother" in different languages
+--
+
+- The Levenshtein distance can be computed between strings
+  + Counts number of insertions, deletions and substitutions to convert one string to another
+--
+
+- Pairwise Levenshtein distances computed and then classical multidimensional scaling applied.
+
+---
+
+#Languages
+
+```{r, echo=FALSE,message=F,warning=F}
+mother<-read_csv('data/mother.csv')
+n<-nrow(mother)
+dd<-matrix(0,n,n)
+for (i in 1:n){
+  for (j in 1:n){
+    dd[i,j]<-adist(mother$Word[i],mother$Word[j])
+    dd[j,i]<-dd[i,j]
+  }
+}
+
+df<-cbind(cmdscale(as.dist(dd)),mother)
+colnames(df)[1:2]<-c("Comp. 1", "Comp. 2")
+
+ggplot(df,aes(x=`Comp. 1`,y=`Comp. 2`,label=Word,text=Language))+geom_text()->g1
+
+ggplotly(g1,tooltip = 'text')%>%frameWidget()
+
+
+```
+
+---
+
+# Road distances
+
+- Suppose that we have the road distances between different cities in Australia.
+--
+
+- The road distances are non-Euclidean since roads can be quite wiggly.
+--
+
+- We want to create a 2-dimensional map with the locations of the cities using only these road distances.  
+--
+
+- Classical MDS can give an approximation that is quite close to a real map.
+
+---
+
+# Road Distances
+
+
+```{r setd,echo=FALSE}
+dm<-matrix(c(
+0,0,0,0,0,0,0,0,  
+1717,0,0,0,0,0,0,0,
+2546,996,0,0,0,0,0,0,
+3054,1674,868,0,0,0,0,0,
+3143,2063,1420,728,0,0,0,0,
+5954,4348,4144,3452,2724,0,0,0,
+2727,3415,4000,3781,3053,4045,0,0,
+2324,3012,2644,2270,1542,3630,1511,0
+),
+8,8,byrow = TRUE)
+doz<-as.dist(dm)
+attributes(doz)$Labels<-c("Cairns",
+                         "Brisbane",
+                         "Sydney",
+                         "Melbourne",
+                         "Adelaide",
+                         "Perth",
+                         "Darwin",
+                         "Alice Springs")                  
+kable(as.matrix(doz))%>% kable_styling(bootstrap_options = c("striped","hover","condensed"),font_size = 12)%>%
+  scroll_box(height="500px")
+```
+
+---
+
+# Australia
+
+
+```{r ozmap,eval=TRUE,cache=TRUE, echo=FALSE,message=FALSE, warning=FALSE}
+oz<-get_map(location=c(134,-23.5),zoom=4,maptype='watercolor',source='stamen')
+coords<-data_frame(city=c("Sydney",
+                  "Melbourne",
+                  "Brisbane",
+                  "Perth",
+                  "Adelaide",
+                  "Cairns",
+                  "Alice Springs",
+                  "Darwin"),
+           lng=c(151.2093,
+                 144.9631,
+                 153.025124,
+                 115.860457,
+                 138.600746,
+                 145.7781,
+                 133.8807,
+                 130.845642),
+           lat=c(-33.8688,
+                 -37.8136,
+                 -27.469771,
+                 -31.950527,
+                 -34.928499,
+                 -16.9186,
+                 -23.6980,
+                 -12.463440)
+           )
+g<-ggmap(oz)+geom_text(data=coords,aes(x=lng, y=lat,label=city),size=8,nudge_y = 1.5)+geom_point(data=coords,aes(x=lng, y=lat),size=6)
+g
+```
+
+---
+
+# MDS Solution
+
+```{r,mdsoz,echo=FALSE}
+cmdscale(doz)->dozout
+colnames(dozout)<-c('lng','lat')
+dozout%>%
+  as.data.frame()%>%
+  rownames_to_column("city")->
+  ozmdsout
+ggplot(ozmdsout,aes(x=lng,y=lat,label=city))+geom_text(size=8)+coord_cartesian(xlim=c(-3500,3000))
+```
+
+---
+
+# Rotate
+
+```{r,mdsoz2,echo=FALSE,eval=TRUE}
+cmdscale(doz)->dozout
+th<-0.65
+dozout<-dozout/130
+rot<-matrix(c(cos(th),-sin(th),sin(th),cos(th)),2,2)
+dozout<-dozout%*%rot
+cent<-apply(coords[,2:3],2,mean)+c(1,-1)
+for (i in 1:8){dozout[i,]<-dozout[i,]+cent}
+colnames(dozout)<-c('lng','lat')
+dozout%>%
+  as.data.frame()%>%
+  rownames_to_column("city")->
+  ozmdsout
+ggplot(ozmdsout,aes(x=lng,y=lat,label=city))+geom_text(size=8)+coord_cartesian(xlim=c(115,156))
+```
+---
+
+# Back with Map
+
+```{r, mdssolmap,echo=FALSE,eval=TRUE}
+ggmap(oz)+geom_text(data=ozmdsout,aes(x=lng, y=lat,label=city),size=8,nudge_y = 1.5)+geom_point(data=ozmdsout,aes(x=lng, y=lat),size=6)
+```
+
+
+---
+class: inverse, middle, center
+
+# MDS: Beyond Linearity
+
+---
+
+# A different objective
+

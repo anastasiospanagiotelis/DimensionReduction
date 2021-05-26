@@ -34,10 +34,17 @@ MathJax.Hub.Config({
       bY: "{\\mathbf{Y}}",
       bw: "{\\mathbf{w}}",
       bW: "{\\mathbf{W}}",
+      bU: "{\\mathbf{U}}",
       bS: "{\\mathbf{S}}",
       calL: "{\\mathcal{L}}",
-      bbR: "{\\mathbb{R}}"
-    }
+      bbR: "{\\mathbb{R}}",
+      bB: "{\\mathbf{B}}",
+      bLambda: "{\\boldsymbol{\\Lambda}}",
+      bDelta: "{\\boldsymbol{\\Delta}}",
+      bH: "{\\mathbf{H}}",
+      bI: "{\\mathbf{I}}",
+      biota: "{\\boldsymbol{\\iota}}"
+      }
   }
 });
 </script>
@@ -79,6 +86,7 @@ class: center, middle, inverse
 `$$y_i=w_1x_{i1}+w_2x_{i2}+\dots w_px_{ip}$$`
 has the biggest possible variance.
 --
+
 This is called the first principal component (PC).
 
 
@@ -8598,8 +8606,8 @@ wbPC&lt;-augment(pca,wb) #Add PCs to dataframe
 
 # Plot
 
-<div id="htmlwidget-3f4c4a7fd44977a0bc6c" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3f4c4a7fd44977a0bc6c">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-5.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e33c2e6eb0bf4a93d156" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e33c2e6eb0bf4a93d156">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-5.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -8819,16 +8827,327 @@ for now!
 `$$\sum\limits_{i=1}^{n-1}\sum\limits_{j=i+1}^n (\delta_{ij}^2-d_{ij}^2)$$`
 --
 
+- This is known as classical MDS
+--
+
 - How can we solve this?
 
 ---
 
 # Solution
 
-1. Double Center
-2. Eigenvalue Decomposition
+1. Construct an `\(n\times n\)` matrix of squared interpoint distances `\(\bDelta^{(2)}=\left\{\delta^2_{ij}\right\}\)`
+--
+
+2. Double center `\(\bDelta^{(2)}\)` by computing `\(\bB=\bH'\bDelta^{(2)}\bH\)` where `\(\bH=\bI-(1/n)\biota\biota'\)`
+--
+
+3. Find the eigenvalue decomposition of `\(\bB=\bU\bLambda\bU'\)`
+--
+
+4. The output coordinates are given by the first `\(m\)` columns of `\(\bU\bLambda^{1/2}\)`
 
 ---
+
+# Implementation
+
+
+```r
+library(tidyverse)
+wb&lt;-read_csv('data/WorldBankClean.csv')
+wb%&gt;%
+  select_if(.,is.numeric)%&gt;% #Use numeric data
+  scale()%&gt;% #Standardise
+  dist()%&gt;% #Compute distance matrix
+  cmdscale()%&gt;% #MDS
+  as_tibble(.name_repair = 'universal')%&gt;%
+  cbind(wb)-&gt;wb_mds
+```
+
+---
+
+# Plot
+
+<div id="htmlwidget-79fd2f4f52e5daf4579c" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-79fd2f4f52e5daf4579c">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-11.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+# Look familiar??
+
+- This is almost identical to Principal Components Analysis
+--
+
+- The axes have been flipped!
+--
+
+- PCA is invariant to reflections.
+--
+Why?
+--
+
+- MDS is also invariant to rotations.
+--
+Why?
+
+---
+
+# Why are they the same?
+
+- Proof is a bit involved.
+--
+
+- The key idea to show that `\(\bB\)` is related to `\(\bX\bX'\)` while `\(\bS\)` is related to `\(\bX'\bX\)`
+--
+
+- `\(\bX'\bX\)` and `\(\bX\bX'\)` have the same non-zero eigenvalues.
+--
+
+- Geometrically, the result makes sense by thinking about the extreme case where the data lie on a `\(m\)`-dimensional plane.
+
+---
+class:inverse,middle,center
+
+# Beyond Euclidean Distance
+
+---
+
+# Non-Euclidean Distance
+
+- What if a non-Euclidean distance is used?
+--
+
+- In this case classical MDS does not minimise Strain as defined previously.
+--
+
+- It has optimality properties in terms of `\(\bB\)`, minimising.
+
+`$$\sum$$`
+--
+
+- Distances between output points faithfully represent distances between input points.
+
+---
+
+# Implementation (L1)
+
+
+```r
+library(tidyverse)
+wb&lt;-read_csv('data/WorldBankClean.csv')
+wb%&gt;%
+  select_if(.,is.numeric)%&gt;% #Use numeric data
+  scale()%&gt;% #Standardise
+  dist(method = 'manhattan')%&gt;% #Compute distance matrix
+  cmdscale()%&gt;% #MDS
+  as_tibble(.name_repair = 'universal')%&gt;%
+  cbind(wb)-&gt;wb_mds_L1
+```
+
+---
+
+# Plot (L1)
+
+&lt;img src="lecture01_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+# Plot (L2)
+
+&lt;img src="lecture01_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Why is this useful?
+
+- We can have distances/dissimilarities between all sorts of objects
+--
+  
+  + Time series
+  + Functions
+  + Probability distributions
+  + Strings/ Texts
+
+---
+
+# A toy example
+
+- Consider the word for "mother" in different languages
+--
+
+- The Levenshtein distance can be computed between strings
+  + Counts number of insertions, deletions and substitutions to convert one string to another
+--
+
+- Pairwise Levenshtein distances computed and then classical multidimensional scaling applied.
+
+---
+
+#Languages
+
+<div id="htmlwidget-331fbb2bf732d146031f" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-331fbb2bf732d146031f">{"x":{"url":"lecture01_files/figure-html//widgets/widget_unnamed-chunk-15.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+# Road distances
+
+- Suppose that we have the road distances between different cities in Australia.
+--
+
+- The road distances are non-Euclidean since roads can be quite wiggly.
+--
+
+- We want to create a 2-dimensional map with the locations of the cities using only these road distances.  
+--
+
+- Classical MDS can give an approximation that is quite close to a real map.
+
+---
+
+# Road Distances
+
+
+&lt;div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; "&gt;&lt;table class="table table-striped table-hover table-condensed" style="font-size: 12px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Cairns &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Brisbane &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Sydney &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Melbourne &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Adelaide &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Perth &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Darwin &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Alice Springs &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Cairns &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1717 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2546 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3054 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3143 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5954 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2727 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2324 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Brisbane &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1717 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 996 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1674 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2063 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4348 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3415 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3012 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Sydney &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2546 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 996 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 868 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1420 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4144 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2644 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Melbourne &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3054 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1674 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 868 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 728 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3452 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3781 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2270 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Adelaide &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3143 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2063 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1420 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 728 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2724 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3053 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1542 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Perth &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5954 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4348 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4144 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3452 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2724 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4045 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3630 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Darwin &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2727 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3415 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3781 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3053 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4045 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1511 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Alice Springs &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2324 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3012 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2644 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2270 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1542 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3630 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1511 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;&lt;/div&gt;
+
+---
+
+# Australia
+
+
+![](lecture01_files/figure-html/ozmap-1.png)&lt;!-- --&gt;
+
+---
+
+# MDS Solution
+
+![](lecture01_files/figure-html/mdsoz-1.png)&lt;!-- --&gt;
+
+---
+
+# Rotate
+
+![](lecture01_files/figure-html/mdsoz2-1.png)&lt;!-- --&gt;
+---
+
+# Back with Map
+
+![](lecture01_files/figure-html/mdssolmap-1.png)&lt;!-- --&gt;
+
+
+---
+class: inverse, middle, center
+
+# MDS: Beyond Linearity
+
+---
+
+# A different objective
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
