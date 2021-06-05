@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>AMSI Winter  School 2021</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/pymjs/pym.v1.js"></script>
+    <script src="libs/widgetframe-binding/widgetframe.js"></script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="../css/mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# AMSI Winter </br> School 2021
+## Dimension Reduction:</br>MDS
+### Anastasios Panagiotelis
+### University of Sydney
+
+---
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: {
+    Macros: {
+      bv: "{\\mathbf{v}}",
+      bw: "{\\mathbf{w}}",
+      bx: "{\\mathbf{x}}",
+      bX: "{\\mathbf{X}}",
+      by: "{\\mathbf{y}}",
+      bY: "{\\mathbf{Y}}",
+      bw: "{\\mathbf{w}}",
+      bW: "{\\mathbf{W}}",
+      bU: "{\\mathbf{U}}",
+      bS: "{\\mathbf{S}}",
+      calL: "{\\mathcal{L}}",
+      calM: "{\\mathcal{M}}",
+      bbR: "{\\mathbb{R}}",
+      bB: "{\\mathbf{B}}",
+      bLambda: "{\\boldsymbol{\\Lambda}}",
+      bDelta: "{\\boldsymbol{\\Delta}}",
+      bH: "{\\mathbf{H}}",
+      bI: "{\\mathbf{I}}",
+      biota: "{\\boldsymbol{\\iota}}",
+      bN: "{\\mathbf{N}}"
+      }
+  }
+});
+</script>
+
+# Outline
+
+- Blah
+- blah
+- blah
+
+
+
+
+---
+
+class: inverse, middle, center
+
+# Multidimensional Scaling (MDS)
+
+---
+
+#The idea
+
+- Input points: `\(\bx_i\in\bbR^p\)` for `\(i=1,\dots,n\)` 
+- Output points: `\(\by_i\in\bbR^m\)` for `\(i=1,\dots,n\)`
+  + `\(m&lt;&lt;p\)`
+--
+
+- Denote distance between `\(\bx_i\)` and `\(\bx_j\)` as `\(\delta_{ij}\)`.
+--
+
+- Denote distance between `\(\by_i\)` and `\(\by_j\)` as `\(d_{ij}\)`.
+--
+
+- Want `\(\delta_{ij}\)` to be similar to `\(d_{ij}\)`.
+
+
+---
+
+# Strain
+
+- Assume Euclidean distances 
+--
+for now!
+--
+
+- Objective is to minimise strain defined as:
+
+`$$\sum\limits_{i=1}^{n-1}\sum\limits_{j=i+1}^n (\delta_{ij}^2-d_{ij}^2)$$`
+--
+
+- This is known as classical MDS
+--
+
+- How can we solve this?
+
+---
+
+# Solution
+
+1. Construct an `\(n\times n\)` matrix of squared interpoint distances `\(\bDelta^{(2)}=\left\{\delta^2_{ij}\right\}\)`
+--
+
+2. Double center `\(\bDelta^{(2)}\)` by computing `\(\bB=\bH'\bDelta^{(2)}\bH\)` where `\(\bH=\bI-(1/n)\biota\biota'\)`
+--
+
+3. Find the eigenvalue decomposition of `\(\bB=\bU\bLambda\bU'\)`
+--
+
+4. The output coordinates are given by the first `\(m\)` columns of `\(\bU\bLambda^{1/2}\)`
+
+---
+
+# Implementation
+
+
+```r
+library(tidyverse)
+wb&lt;-read_csv('../data/WorldBankClean.csv')
+wb%&gt;%
+  select_if(.,is.numeric)%&gt;% #Use numeric data
+  scale()%&gt;% #Standardise
+  dist()%&gt;% #Compute distance matrix
+  cmdscale()%&gt;% #MDS
+  as_tibble(.name_repair = 'universal')%&gt;%
+  cbind(wb)-&gt;wb_mds
+```
+
+---
+
+# Plot
+
+<div id="htmlwidget-875b5154391ac71dd1e3" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-875b5154391ac71dd1e3">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+# Look familiar??
+
+- This is almost identical to Principal Components Analysis
+--
+
+- The axes have been flipped!
+--
+
+- PCA is invariant to reflections.
+--
+Why?
+--
+
+- MDS is also invariant to rotations.
+--
+Why?
+
+---
+
+# Why are they the same?
+
+- Proof is a bit involved.
+--
+
+- The key idea to show that `\(\bB\)` is related to `\(\bX\bX'\)` while `\(\bS\)` is related to `\(\bX'\bX\)`
+--
+
+- `\(\bX'\bX\)` and `\(\bX\bX'\)` have the same non-zero eigenvalues.
+--
+
+- Geometrically, the result makes sense by thinking about the extreme case where the data lie on a `\(m\)`-dimensional plane.
+
+---
+class:inverse,middle,center
+
+# Beyond Euclidean Distance
+
+---
+
+# Non-Euclidean Distance
+
+- What if a non-Euclidean distance is used?
+--
+
+- In this case classical MDS does not minimise Strain as defined previously.
+--
+
+- It has optimality properties in terms of `\(\bB\)`, minimising.
+
+`$$\sum$$`
+--
+
+- Distances between output points faithfully represent distances between input points.
+
+---
+
+# Implementation (L1)
+
+
+```r
+library(tidyverse)
+wb&lt;-read_csv('../data/WorldBankClean.csv')
+wb%&gt;%
+  select_if(.,is.numeric)%&gt;% #Use numeric data
+  scale()%&gt;% #Standardise
+  dist(method = 'manhattan')%&gt;% #Compute distance matrix
+  cmdscale()%&gt;% #MDS
+  as_tibble(.name_repair = 'universal')%&gt;%
+  cbind(wb)-&gt;wb_mds_L1
+```
+
+---
+
+# Plot (L1)
+
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+# Plot (L2)
+
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Why is this useful?
+
+- We can have distances/dissimilarities between all sorts of objects
+--
+  
+  + Time series
+  + Functions
+  + Probability distributions
+  + Strings/ Texts
+
+---
+
+# A toy example
+
+- Consider the word for "mother" in different languages
+--
+
+- The Levenshtein distance can be computed between strings
+  + Counts number of insertions, deletions and substitutions to convert one string to another
+--
+
+- Pairwise Levenshtein distances computed and then classical multidimensional scaling applied.
+
+---
+
+#Languages
+
+<div id="htmlwidget-eef26e39368b3cbf062e" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-eef26e39368b3cbf062e">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+# Road Distances
+
+- Suppose that we have the road distances between different cities in Australia.
+--
+
+- The road distances are non-Euclidean since roads can be quite wiggly.
+--
+
+- We want to create a 2-dimensional map with the locations of the cities using only these road distances.  
+--
+
+- Classical MDS can give an approximation that is quite close to a real map.
+
+---
+
+# Road Distances
+
+Road distances between Australian cities.
+
+&lt;table class="table table-striped table-hover table-condensed" style="font-size: 14px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Cairns &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Brisbane &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Sydney &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Melbourne &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Adelaide &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Perth &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Darwin &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Alice Springs &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Cairns &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1717 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2546 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3054 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3143 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5954 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2727 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2324 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Brisbane &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1717 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 996 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1674 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2063 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4348 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3415 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3012 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Sydney &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2546 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 996 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 868 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1420 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4144 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2644 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Melbourne &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3054 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1674 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 868 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 728 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3452 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3781 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2270 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Adelaide &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3143 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2063 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1420 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 728 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2724 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3053 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1542 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Perth &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5954 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4348 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4144 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3452 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2724 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4045 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3630 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Darwin &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2727 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3415 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3781 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3053 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4045 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1511 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Alice Springs &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2324 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3012 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2644 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2270 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1542 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3630 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1511 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# Australia
+
+
+![](03MDS_files/figure-html/ozmap-1.png)&lt;!-- --&gt;
+
+---
+
+# MDS Solution
+
+![](03MDS_files/figure-html/mdsoz-1.png)&lt;!-- --&gt;
+
+---
+
+# Rotate
+
+![](03MDS_files/figure-html/mdsoz2-1.png)&lt;!-- --&gt;
+
+---
+
+# Back with Map
+
+![](03MDS_files/figure-html/mdssolmap-1.png)&lt;!-- --&gt;
+
+
+---
+class: inverse, middle, center
+
+# MDS: Beyond Linearity
+
+---
+
+# Beyond Classical MDS
+
+- Classical MDS is designed to minimise Strain.
+--
+
+- An alternative  objective function called Stress can be minimised instead
+--
+
+
+`$$\mbox{Stress}=\sum\limits_{i=1}^{n-1}\sum\limits_{j&gt;i}\frac{(\delta_{ij}-d_{ij})^2}{\delta_{ij}}$$`
+--
+
+- The difference between `\(\delta_{ij}\)` and `\(d_{ij}\)` acts like an error.
+--
+
+- The `\(\delta_{ij}\)` on the denominator acts as a weight
+
+---
+
+#Weighting
+
+- For large `\(\delta\)` observations are far away in the input space.
+--
+
+  - For these pairs errors are more easily tolerated.
+--
+
+- For small `\(\delta\)` observations are close in the input space.
+--
+
+  - For these pairs errors are not tolerated.
+--
+
+- The most accuracy is achieved for nearby points
+--
+
+- The local structure is preserved.
+
+---
+
+# Sammon mapping
+
+- The Sammon mapping is solved by numerical optimisation (gradient descent).
+--
+
+- It is different from the classical solution
+--
+
+  - It is not based on an eigenvalue decomposition
+--
+
+  - It is not based on rotation
+--
+
+  - It is a non-linear mapping.
+
+---
+
+# Example
+
+- The following is a simulated toy example to motivate non-linear dimension reduction.
+--
+
+- Consider the case where input points are 2D and the output points are 1D.
+--
+
+- The specific problem of doing multidimensional scaling where the lower dimension is 1 is called *seriation*.
+
+---
+
+# Original Data
+
+![](03MDS_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+---
+
+# Original Data
+
+![](03MDS_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+
+# Rotate (Classical Solution)
+
+![](03MDS_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+
+# Keep 1 Dimension
+
+![](03MDS_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+
+---
+
+# Rug plot (classical solution)
+
+![](03MDS_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+
+---
+
+# Sammon Mapping
+
+![](03MDS_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
+
+# Discussion
+
+- Classical MDS cannot account for non-linearity.
+  + The dark blue and yellow points are represented as close to one another.
+--
+
+- Sammon does account for non-linearity.
+  + The blue and yellow points are represented as far apart.
+--
+
+- The Sammon mapping preserves local structure.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

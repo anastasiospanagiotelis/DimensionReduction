@@ -1,0 +1,63 @@
+---
+title: "AMSI Winter </br> School 2021"
+subtitle: " Dimension Reduction:</br>Introduction"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../aux/defs.html
+
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(gifski)
+```
+
+# Outline
+
+- Motivation
+--
+
+- Datasets
+--
+
+- Fundamentals and notation
+
+---
+
+class: inverse, center, middle
+
+# Motivation
+
+---
+
+# Finding structure
+
+- World Bank
+- Rotated letter A
+- Simple structure from high-dimensional data
+
+---
+
+class: inverse, center, middle
+
+# Fundamentals and Notation
+
+---
+
+# Basics
+
+- Anything in **bold** and lower case is a vector.
+--
+
+- Anything in **bold** and UPPER case is a matrix.

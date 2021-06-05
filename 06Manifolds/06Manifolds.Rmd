@@ -1,0 +1,235 @@
+---
+title: "AMSI Winter </br> School 2021"
+subtitle: "Dimension Reduction</br>Manifolds"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../aux/defs.html
+---
+
+#Outline
+
+- blah
+- blah
+- blah
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(gifski)
+```
+
+---
+
+class: center, middle, inverse
+
+# Manifolds
+
+---
+
+# What is a manifold?
+
+- A manifold is a topological space that is locally homeomorphic to Euclidean space.
+--
+
+  + What do we mean by topological space?
+  + What do we mean by local?
+  + What do we mean by homeomorphic?
+
+---
+
+# Topological space
+
+A set $X$ where each point $x\in X$ has a collection of sets $\bN(x)$ called neighborhoods which satisfy
+
+- Each point belongs to every one of its neighbourhoods 
+--
+
+  + If $N\in\bN(x)$ then 
+--
+$x\in N$.
+
+
+---
+
+# Topological space
+
+- Every superset of a neighbourhood of $x$ is again a neighbourhood of $x$ 
+--
+
+  + If $N_1\in\bN(x)$ 
+--
+and $N_2\supset N_1$ 
+--
+then $N_2\in\bN(x)$.
+
+---
+
+# Topological Space
+
+- The intersection of two neighbourhoods of $x$ is a neighbourhood of $x$ 
+--
+
+  + If $N_1,N_2\in\bN(x)$
+--
+then $N_1\cap N_2\in\bN(x)$.
+
+---
+
+# Topological Space
+
+- Every neighbourhood of $x$ contains a subset such that every point in that subset has the original neighbourhood of $x$ as one of its neighbourhood.
+--
+
+  + If $N\in \bN(x)$ 
+--
+there exists $Z\subset N$ 
+--
+such that for all $z\in Z$ 
+--
+it holds that $N\in\bN(z)$.
+
+---
+
+# Neighbours
+
+- Emphasise here that topology is all about neighbours.
+--
+
+- Similarly manifold learning techniques often start by finding nearest neighbours.
+--
+
+- Later on we will discuss how the fidelity of a manifold learning algorithm can be understood in terms of how well it preserves neighbourhood structure.
+
+---
+
+# Homeomorphic
+
+- A homeomorphism is a mapping $f:X\rightarrow Y$ between two topological spaces that
+--
+
+  + Is a bijection
+  + It is continuous
+  + It has a continuous inverse
+--
+
+- A homeomorphism preserves neighboourhood structure
+
+---
+
+# Local and Euclidean
+
+- Let $x$ be a point on a manifold $\calM$ and let $U$ be a neighbourhood of $x$.
+--
+
+- Locally homeomorphic to Euclidean space, means that there is a mapping (called a chart) $f:U\rightarrow \bbR^m$
+--
+
+- A collection of charts covering the whole manifold is called an atlas.
+
+---
+
+# Riemannian manifold
+
+- So far we have not discussed the geometric properties of a manifold.
+--
+
+- To do this we must add some more structure to the manifold.
+--
+
+- In our context, this extra structure will be the Riemannian.
+--
+
+- Manifolds with this structure are called Riemannian manifolds.
+
+---
+
+# Riemannian
+
+- The Riemannian metric of a manifold $M$ defined at the point $x$ is an inner product $g_x:T_xM\times T_xM\rightarrow\bbR$ defined on the tangent space of $M$.
+--
+
+- What is an inner product?
+--
+
+- What is a tangent space?
+
+---
+
+# Inner product
+
+- The inner product you are probably familiar with is the inner product in Euclidean space.
+--
+
+- For vectors $\bv$ and $\bw$ the inner product is $\bv'\bw$.
+--
+
+- The inner product tells us something about the angle between two vectors. 
+--
+
+- The inner product of $\bv$ and itself tells us something about the length of the vector. 
+--
+
+- Inner products are associated with geometric properties.
+
+---
+
+# Tangent space
+
+- Suppose $\gamma(t):(-1,1)\rightarrow M$ and $\gamma(0)=x$. 
+--
+
+- Also let $\varphi$ be a chart around $x$. 
+--
+
+- The equivalence class of curves $\gamma$ for which
+--
+
+$$\frac{d}{dt}\left[\left.(\varphi\circ\gamma)(t)\right]\right|_{t=0}$$
+--
+
+evaluates to the same value are known as tangent vectors.
+--
+
+- Together these make up the tangent space.
+
+---
+
+# Informally
+
+- Informally imagine you are moving along the manifold.
+--
+
+- Suppose you characterise the direction of movement and speed of movement at the point $x$ by a vector.
+--
+
+- The collection of all such vectors is a tangent space.
+
+---
+
+# Geodesic distance
+
+- A useful application of these ideas is to find the geodesic.
+--
+
+- Let $\gamma:(a,b)\rightarrow M$ be a path along the manifold with $\gamma(a)=x_1$ and $\gamma(b)=x_2$. The geodesic distance from $x_1$ to $x_2$ is given by
+--
+
+$$d(x_1,x_2)=\underset{\gamma(t)}{\inf}\int_{a}^{b} g_{\gamma(t)}(\gamma'(t),\gamma'(t))dt$$
+---
+
+# Summary
+
+- In data science we are trying to uncover the manifold we cannot compute charts and tangent spaces and geodesics using these formal concepts.
+--
+
+- Nonetheless these ideas are important to understand the logic behind manifold learning algorithms
