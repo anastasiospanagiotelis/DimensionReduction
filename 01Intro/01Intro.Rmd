@@ -224,9 +224,9 @@ ggplot(sm,aes(x=demand))+geom_density(fill='blue',alpha=0.2)+facet_wrap(~id,nrow
 
 ---
 
-# Densities
+# Distributions
 
-- Densities of a continuous variable are infinite dimensional objects.
+- Continuous distribution functions are infinite dimensional objects.
 --
 
 - Does it make sense to represent this data in a small number of dimensions?
@@ -235,7 +235,7 @@ ggplot(sm,aes(x=demand))+geom_density(fill='blue',alpha=0.2)+facet_wrap(~id,nrow
 - If all of the densities are log-normal then they can be represented by two parameters.
 --
 
-- Dimension reduction makes sense for densities in general too.
+- Dimension reduction may also make sense even where no single parametric form is assumed.
 
 ---
 
@@ -255,6 +255,9 @@ ggplot(sm,aes(x=demand))+geom_density(fill='blue',alpha=0.2)+facet_wrap(~id,nrow
 --
 
 - Computational efficiency when searching in lower dimensional spaces
+--
+
+- Curse of dimensionality
 
 ---
 
@@ -303,9 +306,24 @@ class: inverse, center, middle
 
 # Distance
 
-- An important concept is the distance between two observations. The Euclidean distance between $\bx_i$ and $\bx_j$ given by
+- An important concept is the distance between two observations. A distance function satisfies four axioms
+--
 
-$$d_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}$$
+  + Symmetry
+  + Positive
+  + Identity of indiscernibles
+  + Triangle Inequality
+--
+
+- Some functions that do not satisfy all of these axioms will also be considered.
+
+---
+
+# Euclidean distance
+
+- The Euclidean distance between $\bx_i$ and $\bx_j$ given by
+
+$$d_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}=||\bx_i-\bx_j||_2$$
 --
 
 - Alternatively $d_{i,j}$ could a different metric:
@@ -331,6 +349,35 @@ $$d_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}$$
   + Each node is an observation
   + Observations $i$ and $j$ are connected by edges if $i$ is a nearest neighbour of $j$ (or vice versa).
   
+---
+
+# Example
+
+
+```{r,message=F,echo=F}
+library(RANN)
+library(igraph)
+library(ggrepel)
+set.seed(5)
+df<-tibble(X1=runif(10),X2=runif(10))
+df%>%ggplot(aes(x=X1,y=X2,label=as.character(1:10)))+geom_point()+geom_text_repel()
+
+```
+
+
+---
+
+# Graph
+
+```{r,echo=F}
+nn<-nn2(df)
+k<-3
+dfe<-tibble(N1=rep(1:10,k),N2=as.vector(nn$nn.idx[,2:(k+1)]))
+graph_from_data_frame(dfe,directed = FALSE)%>%
+  simplify(remove.multiple = TRUE)%>%
+  plot
+```
+
 ---
 
 class: inverse, center, middle

@@ -13189,9 +13189,9 @@ Debt ratios are used to assess the sustainability of a country's debt service ob
 
 ---
 
-# Densities
+# Distributions
 
-- Densities of a continuous variable are infinite dimensional objects.
+- Continuous distribution functions are infinite dimensional objects.
 --
 
 - Does it make sense to represent this data in a small number of dimensions?
@@ -13200,7 +13200,7 @@ Debt ratios are used to assess the sustainability of a country's debt service ob
 - If all of the densities are log-normal then they can be represented by two parameters.
 --
 
-- Dimension reduction makes sense for densities in general too.
+- Dimension reduction may also make sense even where no single parametric form is assumed.
 
 ---
 
@@ -13220,6 +13220,9 @@ Debt ratios are used to assess the sustainability of a country's debt service ob
 --
 
 - Computational efficiency when searching in lower dimensional spaces
+--
+
+- Curse of dimensionality
 
 ---
 
@@ -13268,9 +13271,24 @@ class: inverse, center, middle
 
 # Distance
 
-- An important concept is the distance between two observations. The Euclidean distance between `\(\bx_i\)` and `\(\bx_j\)` given by
+- An important concept is the distance between two observations. A distance function satisfies four axioms
+--
 
-`$$d_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}$$`
+  + Symmetry
+  + Positive
+  + Identity of indiscernibles
+  + Triangle Inequality
+--
+
+- Some functions that do not satisfy all of these axioms will also be considered.
+
+---
+
+# Euclidean distance
+
+- The Euclidean distance between `\(\bx_i\)` and `\(\bx_j\)` given by
+
+`$$d_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}=||\bx_i-\bx_j||_2$$`
 --
 
 - Alternatively `\(d_{i,j}\)` could a different metric:
@@ -13296,6 +13314,20 @@ class: inverse, center, middle
   + Each node is an observation
   + Observations `\(i\)` and `\(j\)` are connected by edges if `\(i\)` is a nearest neighbour of `\(j\)` (or vice versa).
   
+---
+
+# Example
+
+
+![](01Intro_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+
+---
+
+# Graph
+
+![](01Intro_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
 ---
 
 class: inverse, center, middle
