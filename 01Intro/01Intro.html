@@ -25,6 +25,7 @@ class: center, middle, inverse, title-slide
 MathJax.Hub.Config({
   TeX: {
     Macros: {
+      bA: "{\\mathbf{A}}",
       bv: "{\\mathbf{v}}",
       bw: "{\\mathbf{w}}",
       bx: "{\\mathbf{x}}",
@@ -13094,7 +13095,7 @@ Debt ratios are used to assess the sustainability of a country's debt service ob
 - These variables all measure a smaller number of factors such as:
 --
 
-  + Health and mortality
+  + Health and Mortality
 --
 
   + Economic Development
@@ -13185,7 +13186,7 @@ Debt ratios are used to assess the sustainability of a country's debt service ob
 
 # Three households
 
-![](01Intro_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+&lt;img src="01Intro_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -13216,13 +13217,13 @@ Debt ratios are used to assess the sustainability of a country's debt service ob
   + Includes visualisation
 --
 
-- Avoid over-fitting in supervised learning (regression classification)
---
-
-- Computational efficiency when searching in lower dimensional spaces
+- Computational efficiency 
 --
 
 - Curse of dimensionality
+--
+
+  + Avoid over-fitting in supervised learning (regression amd classification)
 
 ---
 
@@ -13235,10 +13236,7 @@ class: inverse, center, middle
 
 # Basics
 
-- Anything in **bold** and lower case is a vector.
---
-
-- Anything in **bold** and UPPER case is a matrix.
+- Matrices and vectors in upper and lower case respectively and bolded.
 --
 
 - The data is made of `\(n\)` observations and `\(p\)` variables
@@ -13275,9 +13273,9 @@ class: inverse, center, middle
 --
 
   + Symmetry
-  + Positive
+  + Non-negativity
   + Identity of indiscernibles
-  + Triangle Inequality
+  + Triangle inequality
 --
 
 - Some functions that do not satisfy all of these axioms will also be considered.
@@ -13302,31 +13300,66 @@ class: inverse, center, middle
 
 # Nearest Neighbours
 
-- The nearest neighbour of a point `\(\bx_i\)` is `\(\bx_j\)` such that `\(d_{i,j}\leq d_{i,k}\)` for all `\(k\neq j\)`
+- The nearest neighbour (NN) of `\(\bx_i\)` is `\(\bx_j\)` such that `\(d_{i,j}\leq d_{i,k}\)` for all `\(k\neq j\)`
 --
 
-- The `\(k\)` nearest neighbours can be similarly defined
+- Similarly define `\(k\)` nearest neighbours
 --
 
-- Often represent nearest neighbours using a graph where
+- Represent as graph where
 --
 
   + Each node is an observation
   + Observations `\(i\)` and `\(j\)` are connected by edges if `\(i\)` is a nearest neighbour of `\(j\)` (or vice versa).
+--
+
+- Alternative definition of neighbours of `\(\bx_i\)` is all `\(\bx_j\)` such that `\(d_{i,j}\leq \epsilon\)`
   
 ---
 
 # Example
 
 
-![](01Intro_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+&lt;img src="01Intro_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
 
+
+---
+
+# Example
+
+&lt;img src="01Intro_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Graph
 
-![](01Intro_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+&lt;img src="01Intro_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Graph
+
+&lt;img src="01Intro_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Eigenvalue Decomposition
+
+- Consider a square matrix `\(\bA\)` and the following equation 
+
+`$$\bA\bv=\lambda\bv$$`
+--
+
+- Pairs of `\((\lambda,\bv)\)` such that `\(\bv\neq 0\)` that solve the above equation are known as *eigenvectors* and *eigenvalues* respectively.
+--
+
+- Generally, work with orthonormal `\(\bv\)`, i.e. `\(\bv'\bv=1\)` and `\(\bv_1'\bv_2=0\)`
+ 
+---
+
+# Code
+
+- Everything is available on github including the code to make these slides.
 
 ---
 

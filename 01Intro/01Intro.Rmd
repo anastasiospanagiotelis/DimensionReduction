@@ -20,6 +20,7 @@ output:
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center')
 ```
 
 # Outline
@@ -104,7 +105,7 @@ kable(wbm,format = 'html')%>%
 - These variables all measure a smaller number of factors such as:
 --
 
-  + Health and mortality
+  + Health and Mortality
 --
 
   + Economic Development
@@ -251,13 +252,13 @@ ggplot(sm,aes(x=demand))+geom_density(fill='blue',alpha=0.2)+facet_wrap(~id,nrow
   + Includes visualisation
 --
 
-- Avoid over-fitting in supervised learning (regression classification)
---
-
-- Computational efficiency when searching in lower dimensional spaces
+- Computational efficiency 
 --
 
 - Curse of dimensionality
+--
+
+  + Avoid over-fitting in supervised learning (regression amd classification)
 
 ---
 
@@ -270,10 +271,7 @@ class: inverse, center, middle
 
 # Basics
 
-- Anything in **bold** and lower case is a vector.
---
-
-- Anything in **bold** and UPPER case is a matrix.
+- Matrices and vectors in upper and lower case respectively and bolded.
 --
 
 - The data is made of $n$ observations and $p$ variables
@@ -310,9 +308,9 @@ class: inverse, center, middle
 --
 
   + Symmetry
-  + Positive
+  + Non-negativity
   + Identity of indiscernibles
-  + Triangle Inequality
+  + Triangle inequality
 --
 
 - Some functions that do not satisfy all of these axioms will also be considered.
@@ -337,17 +335,20 @@ $$d_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}=||\bx_i-\bx_j||_2$$
 
 # Nearest Neighbours
 
-- The nearest neighbour of a point $\bx_i$ is $\bx_j$ such that $d_{i,j}\leq d_{i,k}$ for all $k\neq j$
+- The nearest neighbour (NN) of $\bx_i$ is $\bx_j$ such that $d_{i,j}\leq d_{i,k}$ for all $k\neq j$
 --
 
-- The $k$ nearest neighbours can be similarly defined
+- Similarly define $k$ nearest neighbours
 --
 
-- Often represent nearest neighbours using a graph where
+- Represent as graph where
 --
 
   + Each node is an observation
   + Observations $i$ and $j$ are connected by edges if $i$ is a nearest neighbour of $j$ (or vice versa).
+--
+
+- Alternative definition of neighbours of $\bx_i$ is all $\bx_j$ such that $d_{i,j}\leq \epsilon$
   
 ---
 
@@ -359,11 +360,24 @@ library(RANN)
 library(igraph)
 library(ggrepel)
 set.seed(5)
-df<-tibble(X1=runif(10),X2=runif(10))
-df%>%ggplot(aes(x=X1,y=X2,label=as.character(1:10)))+geom_point()+geom_text_repel()
+h<-rep('reg',10)
+h[3]<-'point'
+h[c(2,6,9)]<-'nn'
+df<-tibble(X1=runif(10),X2=1-runif(10))
+df%>%ggplot(aes(x=X1,y=X2,label=as.character(1:10)))+geom_point(size=6)+geom_text_repel(size=8)
 
 ```
 
+
+---
+
+# Example
+
+```{r ,message=F,echo=F}
+library(ggthemes)
+df%>%ggplot(aes(x=X1,y=X2,label=as.character(1:10),col=h))+geom_point(size=6)+geom_text_repel(size=8)+scale_color_colorblind()+theme(legend.position='none')
+
+```
 
 ---
 
@@ -375,8 +389,45 @@ k<-3
 dfe<-tibble(N1=rep(1:10,k),N2=as.vector(nn$nn.idx[,2:(k+1)]))
 graph_from_data_frame(dfe,directed = FALSE)%>%
   simplify(remove.multiple = TRUE)%>%
-  plot
+  plot()
 ```
+
+---
+
+# Graph
+
+```{r,echo=F}
+nn<-nn2(df)
+k<-3
+dfe<-tibble(N1=rep(1:10,k),N2=as.vector(nn$nn.idx[,2:(k+1)]))
+graph_from_data_frame(dfe,directed = FALSE)%>%
+  simplify(remove.multiple = TRUE)%>%
+  plot(mark.groups=list(c(2,3),c(3,9),c(3,6)),mark.col="#CCCCCC",mark.border="#000000")
+```
+
+---
+
+# Eigenvalue Decomposition
+
+- Consider a square matrix $\bA$ and the following equation 
+
+$$\bA\bv=\lambda\bv$$
+--
+
+- Pairs of $(\lambda,\bv)$ such that $\bv\neq 0$ that solve the above equation are known as *eigenvectors* and *eigenvalues* respectively.
+--
+
+- Generally, work with orthonormal $\bv$, i.e. $\bv_i'\bv_i=1$ and $\bv_i'\bv_j=0$ for $i\neq j$
+ 
+---
+
+# Code
+
+- Everything is available on github including the code to make these slides.
+
+- Folder *data* contains data
+
+LINK
 
 ---
 
