@@ -13286,10 +13286,13 @@ class: inverse, center, middle
 
 - The Euclidean distance between `\(\bx_i\)` and `\(\bx_j\)` given by
 
-`$$d_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}=||\bx_i-\bx_j||_2$$`
+`$$\delta_{i,j}=\sqrt{(\bx_i-\bx_j)'(\bx_i-\bx_j)}=||\bx_i-\bx_j||_2$$`
 --
 
-- Alternatively `\(d_{i,j}\)` could a different metric:
+- Notation `\(\delta(\bx_i,\bx_j)\)` will also be used
+--
+
+- Alternatively `\(\delta_{i,j}\)` could a different metric:
 --
 
   + Manhattan distance 
@@ -13300,7 +13303,7 @@ class: inverse, center, middle
 
 # Nearest Neighbours
 
-- The nearest neighbour (NN) of `\(\bx_i\)` is `\(\bx_j\)` such that `\(d_{i,j}\leq d_{i,k}\)` for all `\(k\neq j\)`
+- The nearest neighbour (NN) of `\(\bx_i\)` is `\(\bx_j\)` such that `\(\delta_{i,j}\leq \delta_{i,k}\)` for all `\(k\neq j\)`
 --
 
 - Similarly define `\(k\)` nearest neighbours
@@ -13313,7 +13316,7 @@ class: inverse, center, middle
   + Observations `\(i\)` and `\(j\)` are connected by edges if `\(i\)` is a nearest neighbour of `\(j\)` (or vice versa).
 --
 
-- Alternative definition of neighbours of `\(\bx_i\)` is all `\(\bx_j\)` such that `\(d_{i,j}\leq \epsilon\)`
+- Alternative definition of neighbours of `\(\bx_i\)` is all `\(\bx_j\)` such that `\(\delta_{i,j}\leq \epsilon\)`
   
 ---
 

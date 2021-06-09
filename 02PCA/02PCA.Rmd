@@ -411,3 +411,8 @@ $$\bx_i=\bA\by_i+\boldsymbol{\xi}_i$$
 
 - All of these intuitions are useful.
 
+---
+
+class: inverse, center, middle
+
+#Questions?

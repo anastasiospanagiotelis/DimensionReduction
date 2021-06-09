@@ -28,6 +28,7 @@ class: center, middle, inverse, title-slide
 MathJax.Hub.Config({
   TeX: {
     Macros: {
+      bA: "{\\mathbf{A}}",
       bv: "{\\mathbf{v}}",
       bw: "{\\mathbf{w}}",
       bx: "{\\mathbf{x}}",
@@ -55,9 +56,17 @@ MathJax.Hub.Config({
 
 # Outline
 
-- Blah
-- blah
-- blah
+- Classical Multidimensional Scaling
+--
+
+  + Euclidean distance
+  + Non-Euclidean distance
+--
+
+- Some applications
+--
+
+- Sammon Mapping 
 
 
 
@@ -141,8 +150,8 @@ wb%&gt;%
 
 # Plot
 
-<div id="htmlwidget-875b5154391ac71dd1e3" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-875b5154391ac71dd1e3">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-264edaa4b9f7c0eb0ac7" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-264edaa4b9f7c0eb0ac7">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -259,8 +268,8 @@ wb%&gt;%
 
 #Languages
 
-<div id="htmlwidget-eef26e39368b3cbf062e" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-eef26e39368b3cbf062e">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6e6f8e56becd9dc23701" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6e6f8e56becd9dc23701">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -394,25 +403,25 @@ Road distances between Australian cities.
 # Australia
 
 
-![](03MDS_files/figure-html/ozmap-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/ozmap-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # MDS Solution
 
-![](03MDS_files/figure-html/mdsoz-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/mdsoz-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Rotate
 
-![](03MDS_files/figure-html/mdsoz2-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/mdsoz2-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Back with Map
 
-![](03MDS_files/figure-html/mdssolmap-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/mdssolmap-1.png" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -494,39 +503,34 @@ class: inverse, middle, center
 
 # Original Data
 
-![](03MDS_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Original Data
 
-![](03MDS_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Rotate (Classical Solution)
 
-![](03MDS_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Keep 1 Dimension
 
-![](03MDS_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
 
-
----
-
-# Rug plot (classical solution)
-
-![](03MDS_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
 
 
 ---
 
 # Sammon Mapping
 
-![](03MDS_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
 
 ---
 
@@ -541,6 +545,28 @@ class: inverse, middle, center
 --
 
 - The Sammon mapping preserves local structure.
+
+---
+
+# Summary
+
+- Classical MDS with Euclidean input distances is identical (up to rotation) to PCA
+--
+
+- This no longer holds with non-Euclidean input distances
+--
+
+  + Classical MDS gives output points that 'approximate' information in the double centered squared distance matrix.
+--
+
+- The Sammon mapping highlights the importance of preserving local structure.
+  
+
+---
+
+class: inverse, center, middle
+
+#Questions?
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>

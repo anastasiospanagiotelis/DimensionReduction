@@ -19,13 +19,22 @@ output:
 
 # Outline
 
-- Blah
-- blah
-- blah
+- Classical Multidimensional Scaling
+--
+
+  + Euclidean distance
+  + Non-Euclidean distance
+--
+
+- Some applications
+--
+
+- Sammon Mapping 
 
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center')
 library(gifski)
 library(ggrepel)
 library(ggmap)
@@ -523,22 +532,15 @@ ggplot(df,aes(x=classic,y=0,col=rank))+geom_point()+scale_color_viridis_c()
 ```
 
 
----
-
-# Rug plot (classical solution)
-
-```{r,echo=FALSE}
-ggplot(df,aes(x=classic,col=rank))+geom_rug()+scale_color_viridis_c()
-```
-
 
 ---
 
 # Sammon Mapping
 
 ```{r,echo=FALSE}
-ggplot(df,aes(x=sammon,col=rank))+geom_rug()+scale_color_viridis_c()
+ggplot(df,aes(x=sammon,y=0,col=rank))+geom_point()+scale_color_viridis_c()
 ```
+
 
 ---
 
@@ -554,4 +556,24 @@ ggplot(df,aes(x=sammon,col=rank))+geom_rug()+scale_color_viridis_c()
 
 - The Sammon mapping preserves local structure.
 
+---
 
+# Summary
+
+- Classical MDS with Euclidean input distances is identical (up to rotation) to PCA
+--
+
+- This no longer holds with non-Euclidean input distances
+--
+
+  + Classical MDS gives output points that 'approximate' information in the double centered squared distance matrix.
+--
+
+- The Sammon mapping highlights the importance of preserving local structure.
+  
+
+---
+
+class: inverse, center, middle
+
+#Questions?
