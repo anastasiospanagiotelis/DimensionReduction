@@ -19,13 +19,24 @@ output:
 
 # Outline
 
-- Blah
-- blah
-- blah
+- What is PCA?
+--
+
+- Application of PCA
+--
+
+- Algebraic understanding
+--
+
+- Geometric understanding
+--
+
+- Latent factor model understanding
 
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center')
 library(gifski)
 library(ggrepel)
 library(ggmap)
@@ -92,9 +103,6 @@ $\rightarrow$ arbitrarily big variance.
   + Center all variables by subtracting the mean.
   + Standardise all variables to have unit variance.
   
----
-
-# An example
 
 ```{r,message=F,echo=F}
 
@@ -119,41 +127,17 @@ write_csv(wb_clean,'../data/WorldBankClean.csv')
 
 ```
 
-- Data obtained from the World Bank for 132 countries and 67 variables.
---
-
-- Variables include:
---
-
-  + Health indicators and life expectancy
-  + Technology adoption
-  + Education rates
-  + Economic indicators 
---
-
-- Some variables and observations removed to reduce missing data.
 
 ---
+class: center, middle, inverse
 
-# Data
-
-```{r,message=F,echo=F}
-library(knitr)
-library(kableExtra)
-wb<-read_csv('../data/WorldBankClean.csv')
-kable(wb,format = 'html')%>%
-  kable_styling(font_size = 9,bootstrap_options = c("striped","hover","condensed"))%>%
-  scroll_box(height="400px")
-
-```
-
-For more on data LINK
+#An application
 
 ---
 
 # Implementation
 
-R Code to implement PCA
+R Code to implement PCA for World Bank Data
 --
 
 ```{r,message=F,echo=T}
@@ -167,6 +151,24 @@ wb%>%
 wbPC<-augment(pca,wb) #Add PCs to dataframe
 
 ```
+
+---
+
+# Explaining variance
+
+- The variance of the first PC is `r (pca$sdev[1]^2)%>%round(2)`.
+--
+  
+  + This represents `r (100*(pca$sdev[1]^2)/length(pca$sdev))%>%round(2)`% of the total variance of the data.
+--
+
+- The variance of the second PC is `r (pca$sdev[2]^2)%>%round(2)`.
+--
+  
+  + This represents `r (100*(pca$sdev[2]^2)/length(pca$sdev))%>%round(2)`% of the total variance of the data.
+--
+
+- Together the first 5 PCs represent `r (100*sum(pca$sdev[1:5]^2)/length(pca$sdev))%>%round(2)`% of the total variance of the data.
 
 ---
 
@@ -207,7 +209,7 @@ ggplotly(g1,dynamicTicks = T,tooltip="text")%>%
 - Countries that are similar to one another are closer together on the plot.
 --
 
-- A small number of $m<<p$ PCs is sufficient to explain a large proportion of variance.
+- A small number of PCs explains a large proportion of variance.
 
 ---
 class: middle, center, inverse
@@ -230,7 +232,7 @@ $$\underset{\bw}{argmax}\,\frac{1}{n-1}\bw'\bX'\bX\bw$$
 subject to $\bw'\bw=1$
 --
 
-- Replace $\bS=\frac{1}{n-1}\bX'\bX$
+- Substitute $\bS=\frac{1}{n-1}\bX'\bX$
 ---
 
 # Solution
@@ -267,7 +269,7 @@ $$\bS\bw=\lambda\bw$$
 
 # Data compression
 
-- For the eigendecomposition
+- When $\lambda_j$ / $\bw_j$ are eigenvalues/eigenvectors
 
 $$\bS=\sum_{j=1}^p \lambda_j\bw_j\bw_j'$$
 - This can be approximated by
@@ -283,7 +285,7 @@ class: inverse, middle, center
 
 # Rotations
 
-- A matrix of eigenvectors $\bW$ is a rotation matrix
+- For symmetric p.s.d matrices, the matrix of eigenvectors $\bW$ is a rotation matrix
 --
   
   + Columns/rows are orthogonal
@@ -380,17 +382,17 @@ First PC projects onto blue line, second PC on to green line.
 
 - Suppose the data are generated from the following statistical model
 
-$$\bx_i=\mathbf{A}\by_i+\boldsymbol{\xi}_i$$
+$$\bx_i=\bA\by_i+\boldsymbol{\xi}_i$$
 --
 
 - where
-  + $\mathbf{x}_i$ is a $p\times 1$ data vector, 
-  + $\mathbf{y}_i$ is a $m\times 1$ latent factor,
-  + $\mathbf{A}$ are factor loadings,
+  + $\bx_i$ is a $p\times 1$ data vector, 
+  + $\by_i$ is a $m\times 1$ latent factor,
+  + $\bA$ are factor loadings,
   + $\boldsymbol{\xi}_i$ is a $p\times 1$ error vector.
 --
 
-- This can be estimated using PCs
+- The $\by_i$ can be estimated using PCs
 
 
 ---
