@@ -417,17 +417,22 @@ $$\bA\bv=\lambda\bv$$
 - Pairs of $(\lambda,\bv)$ such that $\bv\neq 0$ that solve the above equation are known as *eigenvectors* and *eigenvalues* respectively.
 --
 
-- Generally, work with orthonormal $\bv$, i.e. $\bv_i'\bv_i=1$ and $\bv_i'\bv_j=0$ for $i\neq j$
+- Rank eigenvalues (and corresponding eigenvectors) in descending order
+--
+
+- Assume $\bv$ have unit length, i.e. $\bv'\bv=1$
  
 ---
 
 # Code
 
 - Everything is available on github including the code to make these slides.
+--
 
 - Folder *data* contains data
+--
 
-LINK
+- Add links
 
 ---
 
