@@ -1,0 +1,369 @@
+---
+title: "AMSI Winter </br> School 2021"
+subtitle: "Dimension Reduction</br>Isomap"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../aux/defs.html
+---
+
+#Outline
+
+- Geodesics
+--
+
+  + Approximation using NN graph
+--
+
+- Isomap algorithm
+--
+
+- Applications
+--
+
+- Initially proposed in J. B. Tenenbaum, V. de Silva, J. C. Langford, (2000), "A Global Geometric Framework for Nonlinear Dimensionality Reduction", *Science* **290**, pp. 2319–2323.
+
+```{r setup, include=FALSE,message=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center',echo=FALSE,message = FALSE,out.height = 450)
+
+library(gifski)
+library(knitr)
+library(dimRed)
+library(rgl)
+
+```
+
+---
+
+class: center, middle, inverse
+
+# Isomap
+
+---
+
+# Idea
+
+- Recall MDS takes distances as inputs.
+--
+
+- These are typically Euclidean
+--
+
+- If non-Euclidean distances are used as inputs, then the output still represents these distances quite accurately.
+--
+
+- ISOMAP uses geodesic distances along the manifold as inputs.
+
+---
+
+# Toy example
+
+Consider the following data
+
+```{r}
+library(tidyverse)
+library(plotly)
+pts<-400
+t<-4*pi*(1-exp(-(seq(0,2,length.out = pts))))
+x<-rep(NA,pts)
+y<-rep(NA,pts)
+for (tt in 1:pts){
+  x[tt]<-t[tt]*cos(t[tt])
+  y[tt]<-t[tt]*sin(t[tt])
+}
+df<-tibble(t,x,y)
+df_sub<-filter(df,row_number()%%10==1)
+
+df_sub%>%
+  ggplot(aes(x=x,y=y))+geom_point(size=4)+theme_void()
+
+```
+
+---
+
+
+# Manifold
+
+Lying on a manifold.
+
+```{r}
+df%>%
+  ggplot(aes(x=x,y=y))+geom_path(color="#E69F00",size=2)+geom_point(data=df_sub,aes(x=x,y=y),size=4)+theme_void()
+
+```
+
+
+---
+
+
+
+# Euclidean distance
+
+Blue points close in ambient space.
+
+```{r}
+df_red<-slice(df_sub,c(9,38))
+df%>%
+  ggplot(aes(x=x,y=y))+geom_path(color="#E69F00",size=2)+
+  geom_point(data=df_sub,aes(x=x,y=y),size=4)+
+  geom_point(data=df_red,aes(x=x,y=y),size=4,col="#56B4E9")+
+  geom_line(data=df_red,aes(x=x,y=y),size=2,col="#56B4E9")+
+  theme_void()
+
+```
+
+
+
+---
+
+# Geodesic Distance
+
+But not on manifold.
+
+```{r}
+df_ps<-slice(df,c(81:370))
+
+df%>%
+  ggplot(aes(x=x,y=y))+geom_path(color="#E69F00",size=2)+
+  geom_point(data=df_sub,aes(x=x,y=y),size=4)+
+  geom_point(data=df_red,aes(x=x,y=y),size=4,col="#56B4E9")+
+  geom_line(data=df_red,aes(x=x,y=y),size=2,col="#56B4E9")+
+  geom_path(data=df_ps,aes(x=x,y=y),color= "#009E73",size=2)+
+  theme_void()
+
+```
+
+---
+
+# Input distances
+
+- Classical MDS would use the distance in blue as an input
+--
+
+- The idea behind Isomap is to use the distance in green as an input.
+--
+
+- However to compute the geodesic (green) distance we need to know the manifold.
+--
+
+- Instead we approximate the geodesic distance
+
+---
+
+# Geodesic Distance
+
+Geodesic can be approximated.
+
+```{r}
+df_da<-slice(df_sub,c(9:38))
+
+df%>%
+  ggplot(aes(x=x,y=y))+geom_path(color="#E69F00",size=2)+
+  geom_point(data=df_sub,aes(x=x,y=y),size=4)+
+  geom_path(data=df_da,aes(x=x,y=y),size=1)+
+  geom_point(data=df_red,aes(x=x,y=y),size=4,col="#56B4E9")+
+  geom_line(data=df_red,aes(x=x,y=y),size=2,col="#56B4E9")+
+  geom_path(data=df_ps,aes(x=x,y=y),color= "#009E73",size=2)+
+  geom_path(data=df_da,aes(x=x,y=y),size=1)+
+  theme_void()
+
+```
+
+---
+
+
+# Geodesic Distance
+
+Try zooming.
+
+```{r}
+library(widgetframe)
+  
+df_da<-slice(df_sub,c(9:38))
+
+df%>%
+  ggplot(aes(x=x,y=y))+geom_path(color="#E69F00",size=1)+
+  geom_point(data=df_sub,aes(x=x,y=y),size=4)+
+  geom_point(data=df_red,aes(x=x,y=y),size=4,col="#56B4E9")+
+  geom_line(data=df_red,aes(x=x,y=y),size=1,col="#56B4E9")+
+  geom_path(data=df_ps,aes(x=x,y=y),color= "#009E73",size=2)+
+  geom_path(data=df_da,aes(x=x,y=y),size=1)+
+  theme_void()->g
+
+ggplotly(g)%>%
+  frameWidget()
+
+```
+
+---
+
+class: center, middle, inverse
+
+# Algorithm
+
+---
+
+# Step 1: Nearest Neighbours
+
+- Find the neighbourhood graph
+--
+
+  + Neighbourhood within a ball $\epsilon$-Isomap
+  + Neearest neighbours $K$-Isomap
+--
+
+- As edge weights use the Euclidean distance between points
+  
+
+---
+
+
+# Example
+
+
+```{r,message=F,echo=F}
+library(RANN)
+library(igraph)
+library(ggrepel)
+set.seed(5)
+h<-rep('reg',10)
+h[3]<-'point'
+h[c(2,6,9)]<-'nn'
+df<-tibble(X1=runif(10),X2=1-runif(10))
+df%>%ggplot(aes(x=X1,y=X2,label=as.character(1:10)))+geom_point(size=6)+geom_text_repel(size=8)+coord_equal()
+
+```
+
+---
+
+# Graph
+
+```{r,echo=F}
+nn<-nn2(df)
+k<-3
+dfe<-tibble(N1=rep(1:10,k),N2=as.vector(nn$nn.idx[,2:(k+1)]))
+graph_from_data_frame(dfe,directed = FALSE)%>%
+  simplify(remove.multiple = TRUE)->ng
+dd<-dist(cbind(df$X1,df$X2))%>%as.matrix()
+wt<-rep(NA,length(E(ng)))
+for(i in 1:length(E(ng))){
+  nds<-ends(ng,i)%>%as.numeric()
+  wt[i]<-dd[nds[1],nds[2]]
+  
+}
+edge_attr(ng,'weight')<-wt
+plot(ng,edge.width=5*wt)
+```
+
+---
+
+# Step 2: Shortest Path
+
+- Find shortest path on graph, between every pair of points.
+--
+
+- Algorithms to do this
+--
+
+  + Dijkstra's method
+  + Floyd- Warshall algorithm
+  + and more...
+--
+
+- Let's look at a simple example for one pair
+
+---
+
+# Shortest path
+
+```{r}
+plot(ng,edge.width=5*wt,mark.groups=list(c(10,4),c(4,7),c(7,8)),mark.col="#CCCCCC",mark.border="#000000")
+```
+---
+
+# On original plot
+
+```{r,message=FALSE}
+
+ggplot(df,aes(x=X1,y=X2))+
+  geom_point(size=6)+
+  geom_text_repel(size=8,label=as.character(1:10))+
+  coord_equal()
+
+```
+---
+
+# On original plot
+
+```{r,message=FALSE}
+df_sub<-slice(df,c(10,4,7,8))
+
+ggplot(df,aes(x=X1,y=X2))+
+  geom_point(size=6)+
+  geom_text_repel(size=8,label=as.character(1:10))+
+  geom_path(data=df_sub,mapping = aes(x=X1,y=X2),col='blue',size=2)+
+  coord_equal()
+
+```
+
+---
+
+# Approximation
+
+- The approximate geodesic distance is given by the sum of the edge weights along the shortest path.
+--
+
+- The quality of this approximation depends on
+  + Number of points
+  + Density of points
+  + Number of NN (or size of $\epsilon$-ball)
+  + Curvature of manifold
+
+---
+
+# Step 3: MDS
+
+- Carry out classical MDS however...
+--
+
+- Use the approximate geodesic distances as inputs
+--
+
+- Notes on MDS for more details.
+
+---
+
+# Pros and Cons
+
+- Advantages
+  + Exploits geometry
+  + Global in the sense that all pairwise geodesic distances are used.
+--
+
+- Disadvantages
+  + Floyd Warshall algorithm is $O(n^3)$
+  + Eigendecomposition for MDS is $O(n^3)$
+
+
+---
+
+class: center, middle, inverse
+
+# Application
+
+---
+
+class: center, middle, inverse
+
+#Questions?

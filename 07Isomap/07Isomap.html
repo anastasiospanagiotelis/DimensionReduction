@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>AMSI Winter  School 2021</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/pymjs/pym.v1.js"></script>
+    <script src="libs/widgetframe-binding/widgetframe.js"></script>
+    <link rel="stylesheet" href="../css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="../css/mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# AMSI Winter </br> School 2021
+## Dimension Reduction</br>Isomap
+### Anastasios Panagiotelis
+### University of Sydney
+
+---
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: {
+    Macros: {
+      bA: "{\\mathbf{A}}",
+      bv: "{\\mathbf{v}}",
+      bw: "{\\mathbf{w}}",
+      bx: "{\\mathbf{x}}",
+      bX: "{\\mathbf{X}}",
+      by: "{\\mathbf{y}}",
+      bY: "{\\mathbf{Y}}",
+      bw: "{\\mathbf{w}}",
+      bW: "{\\mathbf{W}}",
+      bU: "{\\mathbf{U}}",
+      bS: "{\\mathbf{S}}",
+      calL: "{\\mathcal{L}}",
+      calM: "{\\mathcal{M}}",
+      bbR: "{\\mathbb{R}}",
+      bB: "{\\mathbf{B}}",
+      bLambda: "{\\boldsymbol{\\Lambda}}",
+      bDelta: "{\\boldsymbol{\\Delta}}",
+      bH: "{\\mathbf{H}}",
+      bI: "{\\mathbf{I}}",
+      biota: "{\\boldsymbol{\\iota}}",
+      bN: "{\\mathbf{N}}"
+      }
+  }
+});
+</script>
+
+#Outline
+
+- Geodesics
+--
+
+  + Approximation using NN graph
+--
+
+- Isomap algorithm
+--
+
+- Applications
+--
+
+- Initially proposed in J. B. Tenenbaum, V. de Silva, J. C. Langford, (2000), "A Global Geometric Framework for Nonlinear Dimensionality Reduction", *Science* **290**, pp. 2319–2323.
+
+
+
+---
+
+class: center, middle, inverse
+
+# Isomap
+
+---
+
+# Idea
+
+- Recall MDS takes distances as inputs.
+--
+
+- These are typically Euclidean
+--
+
+- If non-Euclidean distances are used as inputs, then the output still represents these distances quite accurately.
+--
+
+- ISOMAP uses geodesic distances along the manifold as inputs.
+
+---
+
+# Toy example
+
+Consider the following data
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-1-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+# Manifold
+
+Lying on a manifold.
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-2-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+
+
+# Euclidean distance
+
+Blue points close in ambient space.
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-3-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# Geodesic Distance
+
+But not on manifold.
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-4-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Input distances
+
+- Classical MDS would use the distance in blue as an input
+--
+
+- The idea behind Isomap is to use the distance in green as an input.
+--
+
+- However to compute the geodesic (green) distance we need to know the manifold.
+--
+
+- Instead we approximate the geodesic distance
+
+---
+
+# Geodesic Distance
+
+Geodesic can be approximated.
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-5-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+# Geodesic Distance
+
+Try zooming.
+
+<div id="htmlwidget-3a23f6cb4e2894f4f13f" style="width:100%;height:450px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3a23f6cb4e2894f4f13f">{"x":{"url":"07Isomap_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+class: center, middle, inverse
+
+# Algorithm
+
+---
+
+# Step 1: Nearest Neighbours
+
+- Find the neighbourhood graph
+--
+
+  + Neighbourhood within a ball `\(\epsilon\)`-Isomap
+  + Neearest neighbours `\(K\)`-Isomap
+--
+
+- As edge weights use the Euclidean distance between points
+  
+
+---
+
+
+# Example
+
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-7-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Graph
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-8-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 2: Shortest Path
+
+- Find shortest path on graph, between every pair of points.
+--
+
+- Algorithms to do this
+--
+
+  + Dijkstra's method
+  + Floyd- Warshall algorithm
+  + and more...
+--
+
+- Let's look at a simple example for one pair
+
+---
+
+# Shortest path
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-9-1.png" height="450" style="display: block; margin: auto;" /&gt;
+---
+
+# On original plot
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-10-1.png" height="450" style="display: block; margin: auto;" /&gt;
+---
+
+# On original plot
+
+&lt;img src="07Isomap_files/figure-html/unnamed-chunk-11-1.png" height="450" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Approximation
+
+- The approximate geodesic distance is given by the sum of the edge weights along the shortest path.
+--
+
+- The quality of this approximation depends on
+  + Number of points
+  + Density of points
+  + Number of NN (or size of `\(\epsilon\)`-ball)
+  + Curvature of manifold
+
+---
+
+# Step 3: MDS
+
+- Carry out classical MDS however...
+--
+
+- Use the approximate geodesic distances as inputs
+--
+
+- Notes on MDS for more details.
+
+---
+
+# Pros and Cons
+
+- Advantages
+  + Exploits geometry
+  + Global in the sense that all pairwise geodesic distances are used.
+--
+
+- Disadvantages
+  + Floyd Warshall algorithm is `\(O(n^3)\)`
+  + Eigendecomposition for MDS is `\(O(n^3)\)`
+
+
+---
+
+class: center, middle, inverse
+
+# Application
+
+---
+
+class: center, middle, inverse
+
+#Questions?
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
