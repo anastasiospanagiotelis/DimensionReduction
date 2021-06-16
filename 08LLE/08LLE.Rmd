@@ -1,0 +1,69 @@
+---
+title: "AMSI Winter </br> School 2021"
+subtitle: "Dimension Reduction</br>LLE"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../aux/defs.html
+---
+
+#Outline
+
+- Local Geometry
+--
+
+  + Affine Combination of Neighbours
+--
+
+- Local Linear Embedding (LLE) algorithm
+--
+
+- Applications
+--
+
+- Initially proposed in Roweis, S. T., & Saul, L. K. (2000). "Nonlinear dimensionality reduction by locally linear embedding.", *Science*, **290**, 2323-2326.
+
+```{r setup, include=FALSE,message=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center',echo=FALSE,message = FALSE,out.height = 450)
+
+library(gifski)
+library(knitr)
+library(dimRed)
+library(rgl)
+knit_hooks$set(webgl = hook_webgl)
+
+```
+
+---
+
+class: center, middle, inverse
+
+# Local Geometry
+
+---
+
+#Idea
+
+- A smooth manifold may be locally flat (at least approximately).
+--
+
+- Each point can be approximated by a weighted affine combination of its neighbours.
+--
+
+- These weights "capture" the local geometry around that point.
+--
+
+- Aim is for points in the output space to have the same local geometry (as measured by weights)
+
+---
