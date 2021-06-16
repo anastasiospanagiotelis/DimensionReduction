@@ -41,6 +41,7 @@ library(gifski)
 library(knitr)
 library(dimRed)
 library(rgl)
+knit_hooks$set(webgl = hook_webgl)
 
 ```
 
@@ -285,6 +286,12 @@ plot(ng,edge.width=5*wt)
 
 ---
 
+# Path from 8 to 10
+
+```{r}
+plot(ng,edge.width=5*wt)
+```
+---
 # Shortest path
 
 ```{r}
@@ -325,10 +332,20 @@ ggplot(df,aes(x=X1,y=X2))+
 --
 
 - The quality of this approximation depends on
-  + Number of points
-  + Density of points
-  + Number of NN (or size of $\epsilon$-ball)
+  + Size of $\epsilon$ or $K$
+  + The density of points $\alpha$
   + Curvature of manifold
+  + Dimension of ambient space
+  + Connectedness of graph
+
+---
+
+# More precisely
+
+For arbitrarily small $\lambda_1$, $\lambda_2$ and $\mu$, with probability $1-\mu$ 
+
+$$\delta_\calM(\bx_i,\bx_j)(1-\lambda_1)\leq\hat{\delta}_\calM(\bx_i,\bx_j)\\\leq\delta_\calM(\bx_i,\bx_j)(1+\lambda_2)$$
+if some conditions hold for $\epsilon$ (or $K$) and the density $\alpha$ of points on the manifold. 
 
 ---
 
@@ -344,6 +361,73 @@ ggplot(df,aes(x=X1,y=X2))+
 
 ---
 
+class: center, middle, inverse
+
+# Application
+
+---
+
+# Swiss roll
+
+```{r,echo=T,eval=F}
+dat <- loadDataSet("3D S Curve")
+plot(dat,type='3varsrgl')
+
+```
+
+```{r,echo=F,webgl=TRUE}
+
+dat <- loadDataSet("3D S Curve")
+invisible(open3d())
+plot(dat,type='3varsrgl')
+rglwidget()
+close3d()
+
+
+```
+
+---
+
+# MDS
+
+```{r,echo=T}
+mdsout <- embed(dat, "MDS")
+plot(mdsout, type = "2vars")
+
+```
+
+---
+
+# Isomap (K=20)
+
+```{r,echo=T}
+isoout <- embed(dat, "Isomap", knn = 20)
+plot(isoout, type = "2vars")
+
+```
+
+---
+
+# Isomap (K=4)
+
+```{r,echo=T}
+isoout <- embed(dat, "Isomap", knn = 4)
+plot(isoout, type = "2vars")
+
+```
+
+---
+
+# Isomap (K=500)
+
+```{r,echo=T,cache=T}
+isoout <- embed(dat, "Isomap", knn = 500)
+plot(isoout, type = "2vars")
+
+```
+
+---
+
 # Pros and Cons
 
 - Advantages
@@ -354,13 +438,8 @@ ggplot(df,aes(x=X1,y=X2))+
 - Disadvantages
   + Floyd Warshall algorithm is $O(n^3)$
   + Eigendecomposition for MDS is $O(n^3)$
+  + Not clear how to pick $K$ or $\epsilon$ 
 
-
----
-
-class: center, middle, inverse
-
-# Application
 
 ---
 
