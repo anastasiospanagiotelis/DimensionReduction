@@ -67,3 +67,64 @@ class: center, middle, inverse
 - Aim is for points in the output space to have the same local geometry (as measured by weights)
 
 ---
+
+# An artist's view
+
+```{r}
+knitr::include_graphics('img/mandolin.jpeg')
+```
+
+Girl with a Mandolin by Pablo Picasso
+
+---
+
+# A mathematician'view
+
+- Each point $\bx_i$ is estimated as a linear combination of neighbours
+--
+
+$$\bx_i\approx\sum\limits_{j\in \mathcal{N}_i} w_{ij}\bx_j$$
+--
+
+where $\mathcal{N}_i$ is set of nearest neighbours of $\bx_i$
+--
+
+- Subject to constraint $\sum\limits_{j\in \mathcal{N}_i} w_{ij}=1$ 
+--
+
+- This is known as an **affine** combination.
+
+---
+
+#Closed form solution
+
+- For each $i$, minimise
+
+$$||\bx_i-\sum\limits_{j\in \mathcal{N}_i} w_{ij}\bx_j||_2^2$$
+
+-  Letting $\bC$ be covariance matrix of local points around $\bx_i$ then solution is
+
+$$\bw_j=\frac{\sum\limits_k \bC^{-1}_{jk}}{\sum\limits_{k}\sum\limits_{l}\bC^{-1}_{jk}}$$
+
+---
+
+
+# Example
+
+---
+
+# Why an affine combination?
+
+- Local geometry should be invariant to
+--
+
+  + Rotation
+  + Scaling
+  + Translation
+--
+
+- The sum to 1 constraint is needed to satisfy the third of these.
+
+---
+
+# The algorithm
