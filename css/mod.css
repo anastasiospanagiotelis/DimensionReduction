@@ -13,7 +13,9 @@ code.r{ /* Code block */
   font-size: 200%;
 }
 
-.mjx-chtml{ font-size: 100%; }
+.mjx-chtml{ font-size: 105% !important; }
+
+.MathJax {font-size: 105% !important;}
 
 ol {
   list-style: none;
