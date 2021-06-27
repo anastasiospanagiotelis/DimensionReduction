@@ -56,3 +56,165 @@ class: center, middle, inverse
 
 # Motivation
 
+- Quality measures can be used to compare
+--
+
+  + Different Algorithms (e.g. Isomap v LLE).
+--
+
+  + Different tuning parameters for a given algorithm (e.g. number of nearest neighbours.
+--
+
+  + Different number of output dimensions (choose $d$).
+--
+
+- Also is the output accurate in some 'absolute' sense?
+
+---
+
+# Topological measures
+
+- Main focus will be on "topological" measures (my terminolgy).
+--
+
+- Are the input neighbours the same/similar as the output neighbours?
+--
+
+- A unifying framework for these is provided by the co-ranking matrix
+
+---
+
+# Distance ranks
+
+- Letting $\delta_{ij}$ be the Euclidean distance between $\bx_i$ and $\bx_j$ and $d_{ij}$ be the Euclidean distance between $\by_i$ and $\by_j$ denote
+--
+
+$$\begin{align}\rho_{ij}&=\left\{k:\delta_{ik}<\delta_{ij}\right\}\\r_{ij}&=\left\{k:d_{ik}<d_{ij}\right\}\end{align}$$
+--
+
+- These are the ranks of the input and output interpoint distances respectively.
+
+---
+
+# Co-Ranking matrix
+
+- Let the matrix $\bQ$ have elements
+--
+
+$$q_{kl}=\left\{(i,j):d_{ij}=k,\delta_{ij}=l\right\}$$
+--
+
+- This counts the number of times a distance ranked $l$ in the input space is ranked $k$ in the output space.
+--
+
+- Non-zeros in lower triangle indicate distant input points collapsed together.
+--
+
+- Non-zeros in upper triangle indicate close input points pulled apart.
+
+---
+
+# S Curve
+
+```{r,echo=T,eval=F}
+dat <- loadDataSet("3D S Curve")
+plot(dat,type='3varsrgl')
+
+```
+
+```{r,echo=F,webgl=TRUE}
+
+dat <- loadDataSet("3D S Curve")
+invisible(open3d())
+plot(dat,type='3varsrgl')
+rglwidget()
+close3d()
+
+
+```
+
+---
+
+# Isomap (K=20)
+
+```{r,echo=T,cache=TRUE}
+isoout <- embed(dat, "Isomap", knn = 20)
+plot(isoout, type = "2vars")
+
+```
+
+---
+
+#Co-Ranking
+
+```{r,cache=TRUE}
+library(coRanking)
+Q<-coranking(dat@data,isoout@data@data,input_Xi = "data")
+imageplot(Q)
+```
+
+---
+
+# Isomap (K=4)
+
+```{r,cache=TRUE,echo=T}
+isoout <- embed(dat, "Isomap", knn = 4)
+plot(isoout, type = "2vars")
+
+```
+
+---
+
+#Co-Ranking
+
+```{r,cache=TRUE}
+library(coRanking)
+Q<-coranking(dat@data,isoout@data@data,input_Xi = "data")
+imageplot(Q)
+```
+
+---
+# Isomap (K=500)
+
+```{r,echo=T,cache=T}
+isoout <- embed(dat, "Isomap", knn = 500)
+plot(isoout, type = "2vars")
+
+```
+
+---
+
+#Co-Ranking
+
+```{r,cache=TRUE}
+library(coRanking)
+Q<-coranking(dat@data,isoout@data@data,input_Xi = "data")
+imageplot(Q)
+```
+
+---
+
+# Remarks
+
+- A narrow ridge along the diagonal indicates input and output distances have similar rank.
+--
+
+- The input distances are Euclidean distances in the ambient space and not geodesics.
+--
+
+  + Non zeros in the bottom right hand corner (upper triangle) are not necessarily a bad thing.
+--
+
+- Can these plots be summarised into a single number?
+
+---
+
+# LCMC
+
+- The local continuity meta criterion can be expressed in terms of the $\bQ$ matrix as
+--
+
+$$LCMC=\frac{K}{1-N}+\frac{1}{NK}\sum\limits_{k=1}^K\sum\limits_{k=1}^K q_{kl}$$
+--
+
+- The parameter $K$ does not need to be the same as the nearest neighbours used in the manifold learning algorithm
