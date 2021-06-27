@@ -129,21 +129,35 @@ ggplot(df)+geom_rug(aes(x=x,col=`f(x)`))+geom_line(aes(x=x,y=`f(x)`))+scale_colo
 $$df=\frac{\partial f}{\partial x_1}dx_1+\frac{\partial f}{\partial x_2}dx_2+\dots+\frac{\partial f}{\partial x_m}dx_m$$
 --
 
-- Local averages related to Laplacian
+- Vector of first partial derivatives should be "small" i.e. have a small norm on average.
+
+---
+
+# Second derivative
+
+- Also of interest is the Laplacian
 --
 
 $$\frac{\partial^2 f}{\partial x^2_1}+\frac{\partial^2 f}{\partial x^2_2}+\dots+\frac{\partial^2 f}{\partial x^2_m}$$
+--
+
+- A local average around any point $x$ can be approximated in a way that depends on the Laplacian.
+--
+
+- The Laplacian indicates whether points in the neigbourhood of $x$ are "hotter" or "colder" than $x$.
+
+
 ---
 
 # Manifolds
 
-- Suppose instead of Euclidean space we have a manifold
+- Instead of Euclidean space we have a manifold
 --
 
-  + Imagine heat on a curved piece of metal
+  + Imagine heat on a curved piece of metal with hot and cold regions.
 --
 
-- Can still define analogues to
+- Must define analogues to
 --
 
   + The gradient
@@ -159,8 +173,8 @@ $$\frac{\partial^2 f}{\partial x^2_1}+\frac{\partial^2 f}{\partial x^2_2}+\dots+
 The gradient of $f$, denoted $\nabla f$ where $f:\calM\rightarrow\bbR$ is a vector field such that
 --
 
-$$df=<\nabla f,d\bv>$$
-where $<,>$ is the Riemannian (an inner product on the tangent space) and $d\bv$ is a tangent vector.
+$$df=g_\bx(\nabla f,d\bv)$$
+where $g_\bx(.,.)$ is the Riemannian (an inner product on the tangent space at $x$) and $\bv$ is a tangent vector.
 
 ---
 
@@ -191,20 +205,26 @@ $$\Delta f=\nabla \cdot \nabla f$$
 --
 
 - If nearby points on the input space are mapped to nearby points nearby on the output space this will be small.
+--
 
+- This is a good criterion for a manifold learning.
 ---
 
-# Criterion
+# Laplace Beltrami Operator
+
+- Why are second derivatives needed?
+--
 
 - By Stokes' theorem
 $$-\int\limits_\calM \Delta (f)f=\int\limits_\calM ||\nabla f||^2$$
 --
 
 - There is a bit of hand-waving here but the idea is to use a generalisation of integration by parts (and the product rule) on manifolds.
---
 
-- Laplacian Eigenmaps aims to minimise this criterion.
+---
+class: inverse, middle, center
 
+#Discretisation
 
 ---
 
@@ -237,24 +257,19 @@ $$-\int\limits_\calM \Delta (f)f\approx\bff'\bD^{-1}\bL\bff$$
 - Minimised by solving $\bD^{-1}\bL\bff=\lambda\bff$
 ---
 
-class: inverse, middle, center
-
-# Approximating the Laplace Beltrami Operator
-
----
 
 # Roadmap
 
-- How to find $\bD\bL$?
+- How to find $\bD$ and $\bL$?
 --
 
-- Exploit connection between Laplace Beltrami operator and heat equation
+- Exploit connection between Laplace Beltrami operator and heat equation.
 --
 
-- Do lots of algebra
+- Do lots of algebra.
 --
 
-- Do a few approximations along the way
+- Do a few approximations along the way.
 
 ---
 
@@ -317,7 +332,7 @@ $$A(t)=(4\pi t)^{-\frac{d}{2}}\int\limits_{\calM}e^{\frac{||\bx_i-\bz||^2}{4t}}f
 
 $$A(t)=\alpha\sum\limits_{\bx_j\in N(\bx_i)}w_{ij}f(\bx_j)$$
 
-- where $w_{ij}=e^{\frac{||\bx_i-\bx_j||^2}{4t}}$
+- where $w_{ij}=\begin{cases}e^{\frac{||\bx_i-\bx_j||^2}{4t}}\text{ if }\bx_i \text{ and }\bx_j\text{ neighbours}\\0\text{ otherwise}\end{cases}$
 --
 
 - and $\alpha=k^{-1}(4\pi t)^{-\frac{d}{2}}$
@@ -332,13 +347,13 @@ $$A(t)=\alpha\sum\limits_{\bx_j\in N(\bx_i)}w_{ij}f(\bx_j)$$
 
 - Putting together
 
-$$-\Delta f(\bx_i)\overset{\propto}{\sim}f(\bx_i)-\alpha\sum\limits_{\bx_j\in N(\bx_i)}w_{ij}f(\bx_j)d\bx_j$$
+$$-\Delta f(\bx_i)\overset{\propto}{\sim}f(\bx_i)-\alpha\sum\limits_{\bx_j\in N(\bx_i)}w_{ij}f(\bx_j)$$
 --
 
 - Aim is to minimise above expression, so multiplying by a constant can be ignored.
 --
 
-- All that is left is to complete a discrete approximation to the original objective function
+- How can this be written as matrices and vectors?
 
 ---
 
@@ -358,7 +373,6 @@ $$-\Delta f(\bx_i)\overset{\propto}{\sim}f(\bx_i)-\alpha\sum\limits_{\bx_j\in N(
 Why?
 
 ---
-class: smallmath
 
 # Row $i$
 
@@ -372,13 +386,13 @@ $$\begin{bmatrix}\vdots&\vdots&\vdots&\vdots&\vdots&\vdots&\vdots\\\vdots&w_{ij_
 
 - Row $i$ evalutes to
 
-$$(\sum_k w_{ij})f(\bx_j)-\sum_j w_{ij}f(\bx_j)$$
+$$\left[\sum_k w_{ik}\right]f(\bx_i)-\sum_j w_{ij}f(\bx_j)$$
 --
 
 - Premultiplying by $\bD^{-1}$ is the same as dividing through by $(\sum_k w_{ij})$ yielding
 --
 
-$$f(\bx_j)-\frac{1}{\sum_k w_{ij}}\sum_j w_{ij}f(\bx_j)$$
+$$f(\bx_i)-\frac{1}{\sum_k w_{ik}}\sum_j w_{ij}f(\bx_j)$$
 ---
 
 # One last trick
@@ -386,10 +400,10 @@ $$f(\bx_j)-\frac{1}{\sum_k w_{ij}}\sum_j w_{ij}f(\bx_j)$$
 - From earlier
 --
 
-$$\Delta f(\bx_i)=f(\bx_i)-\alpha\sum_j w_{ij}f(\bx_j)$$
+$$-\Delta f(\bx_i)\overset{\propto}{\sim}f(\bx_i)-\alpha\sum_j w_{ij}f(\bx_j)$$
 --
 
-- Need to show $\alpha=\frac{1}{\sum_k w_{ij}}$
+- Need to show $\alpha=\frac{1}{\sum_k w_{ik}}$
 --
 
 - Consider $f$ is a constant function $f(\bx)=c$ for all $\bx$
@@ -406,7 +420,7 @@ Why?
 - Therefore
 --
 
-$$\Delta f(\bx_i)=c-\alpha\sum_j w_{ij}c=0$$
+$$-\Delta f(\bx_i)=c-\alpha\sum_j w_{ij}c=0$$
 --
 
 - Solving gives $\alpha=\frac{1}{\sum_j w_{ij}}$
@@ -417,6 +431,100 @@ $$\Delta f(\bx_i)=c-\alpha\sum_j w_{ij}c=0$$
 
 - Putting everything together
 
-$\bD^{-1}\bL\bff\approx f(\bx_i)-\alpha\sum_j w_{ij}f(\bx_j)\approx -\Delta f(\bx_i)$
+$\bD^{-1}\bL\bff\approx f(\bx_i)-\alpha\sum_j w_{ij}f(\bx_j)\overset{\propto}{\sim} -\Delta f(\bx_i)$
 
 - Minimising $-\int_\calM\Delta (f) f$ is approximately the same as minimising $\bff'\bD^{-1}\bL\bff$.
+
+---
+
+# The algorithm
+
+- Step 1: Find nearest neighbours graph.
+--
+
+- Step 2: Find weighted Adjacency, Degree and Graph Laplacian matrices.
+--
+
+- Step 3: Solve the generalised eigenvalue problem $\bL\bff=\lambda\bD\bff$.
+--
+
+- Step 4: Discard eigenvector corresponding to the smallest eigenvalue (this will be a constant function).
+--
+
+- Step 5: Keep eigenvectors corresponding to next $d$ smallest eigenvectors as output.
+
+---
+
+# Simplification
+
+- Limiting case as $t\rightarrow\infty$
+
+$$w_{ij}=\begin{cases}1\text{ if }\bx_i \text{ and }\bx_j\text{ neighbours}\\0\text{ otherwise}\end{cases}$$
+
+- Lose interpretation in terms of Laplace Beltrami operator
+--
+
+- Still minimise (subject to $f(\bx_i)^2\sum_j w_{ij}=1$)
+
+$$\sum_i\sum_j (f(\bx_i)-f(\bx_j))^2w_{ij}$$
+
+
+---
+
+class: middle, inverse, center
+
+#Implementation
+
+---
+
+# Swiss Roll
+
+```{r,echo=T,eval=F}
+datsr <- loadDataSet("Swiss Roll")
+plot(datsr,type='3varsrgl')
+
+```
+
+```{r,echo=F,webgl=TRUE}
+
+datsr <- loadDataSet("Swiss Roll")
+invisible(open3d())
+plot(datsr,type='3varsrgl')
+rglwidget()
+close3d()
+
+
+```
+
+---
+
+# Laplacian Eigenmaps (k=50)
+
+```{r,echo=T}
+leoutsr <- embed(datsr, "LaplacianEigenmaps")
+plot(leoutsr, type = "2vars")
+
+```
+
+---
+
+# Laplacian Eigenmaps (k-30)
+
+```{r,echo=T}
+leoutsr2 <- embed(datsr, "LaplacianEigenmaps",knn=30)
+plot(leoutsr2, type = "2vars")
+
+```
+
+---
+
+# Pros and Cons
+
+- Advantages
+  + Fast due to exploitation of sparse eigenvalue algorithms
+  + Elegant theoretical foundation
+--
+
+- Disadvantages
+  + Only captures local geometry
+  + There are up to two tuning parameters to select.
