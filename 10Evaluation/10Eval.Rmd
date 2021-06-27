@@ -1,0 +1,58 @@
+---
+title: "AMSI Winter </br> School 2021"
+subtitle: "Dimension Reduction</br>Evaluation"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../aux/defs.html
+---
+
+#Outline
+
+- "Topological" measures
+--
+
+  + Lee, J.A. and Verleysen, M., (2009), Quality assessment of dimensionality reduction: Rank-based criteria. *Neurocomputing*, **72**, pp.1431-1443.
+--
+
+- "Geometric" measures
+--
+
+  + Goldberg, Y. and Ritov, Y.A., (2009), Local procrustes for manifold embedding: a measure of embedding quality and embedding algorithms. *Machine learning*, **77**, pp.1-25.
+
+```{r setup, include=FALSE,message=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center',echo=FALSE,message = FALSE,out.height = 450)
+
+library(gifski)
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(dimRed)
+library(rgl)
+library(ggrepel)
+library(microbenchmark)
+knit_hooks$set(webgl = hook_webgl)
+
+```
+
+---
+
+class: center, middle, inverse
+
+# How to evaluate manifold learning?
+
+---
+
+# Motivation
+
