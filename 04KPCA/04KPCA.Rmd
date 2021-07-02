@@ -1,0 +1,253 @@
+---
+title: "AMSI Winter </br> School 2021"
+subtitle: "Dimension Reduction:</br>Kernel PCA"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../aux/defs.html
+---
+
+# Outline
+
+- Feature mapping
+--
+
+  + Why we sometimes need to go to higher dimensions to get to lower dimensions.
+--
+
+- Kernel trick
+--
+
+  + How we can compute inner products of high (even infinite) dimensional transformations of the data using only our original data
+--
+
+- Kernel PCA algorithm
+--
+
+  + Using this for PCA.
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center',echo=FALSE,message = F,warning = F)
+library(gifski)
+library(ggrepel)
+library(ggmap)
+library(tidyverse)
+library(ggthemes)
+library(broom)
+library(rgl)
+knitr::knit_hooks$set(webgl = hook_webgl)
+```
+
+---
+
+class: center, middle, inverse
+
+# Feature Mapping
+
+---
+
+# Non linear PCA
+
+- Regular PCA gives principal components that are linear functions of the data.
+--
+
+- As a rough idea consider including polynomials $x^2, x^3,x^4,\dots$ as well as cross products.
+--
+
+- In general, let $\Phi:\bbR^m\rightarrow\bbR^M$ where $M>m$ be a feature map.
+--
+
+- Rather than carry out principal components on $\bx$, carry out principal components on $\Phi(\bx)$
+
+---
+
+# Question
+
+- Aren't we doing dimension reduction?
+--
+
+- Yes, however the idea is that a linear transformation can only reveal patterns if we transform to a higher dimension first.
+--
+
+- Consider this example
+
+---
+
+# Circles
+
+```{r}
+set.seed(1)
+pts<-200
+theta<-runif(pts)*2*pi
+r<-c(runif(pts/2),runif(pts/2)+1.5)
+x<-cos(theta)*r
+y<-sin(theta)*r
+
+df<-tibble(x1=x,x2=y,group=c(rep('Black',pts/2),rep('Yellow',pts/2)))
+df%>%
+  ggplot(aes(x=x1,y=x2,col=group))+geom_point()+scale_color_colorblind()
+
+```
+
+---
+
+# Circles example
+
+- Suppose we use PCA to go from 2 dimensions to 1 dimension.
+--
+
+- Since PCA can only rotate the data, there is no way to separate out the black and yellow points.
+--
+
+- This may be an important feature that we want to identify in lower dimensional space.
+
+---
+
+# First PC of circles example
+
+
+```{r}
+df%>%
+  select_if(is.numeric)%>%
+  prcomp()%>%
+  tidy%>%
+  filter(PC==1)%>%
+  `$`(value)->pc1
+
+add_column(df,pc1=pc1)%>%
+  ggplot(aes(x=pc1,y=0,col=group))+geom_point()+scale_color_colorblind()
+
+```
+
+---
+
+# Add dimension
+
+- Consider adding a new variable given by $x_3=x_1^2+x_2^2$
+--
+
+- Then we we carry out PCA on $x_1$, $x_2$ and $x_3$
+--
+
+- Will the first principle component separate out the black and yellow points.
+
+---
+
+# More dimensions
+
+```{r,webgl=T}
+df<-mutate(df,x3=x1^2+x2^2)
+#library(car)
+invisible(open3d())
+plot3d(x=df$x1,y=df$x2,z=df$x3,xlab='x1',ylab='x2',zlab='x3',col=c(rep('black',100),rep('#E69F00',100)))
+rglwidget()
+close3d()
+```
+
+---
+
+# First PC
+
+```{r}
+df%>%
+  select_if(is.numeric)%>%
+  prcomp()%>%
+  tidy%>%
+  filter(PC==1)%>%
+  `$`(value)->pc1
+
+add_column(df,pc1b=pc1)%>%
+  ggplot(aes(x=pc1,y=0,col=group))+geom_point()+scale_color_colorblind()
+
+```
+
+---
+
+# Problems
+
+- How to compute feature space?
+--
+
+- Will this be computationally feasible?
+--
+
+- There is a trick we can use so that we never have to compute the feature space
+--
+
+- This is known as the 'kernel' trick and is pervasive in machine learning.
+
+---
+
+class: inverse, middle, center
+
+# The kernel trick
+
+---
+
+# The kernel trick
+
+- Consider $\Phi(\bx)$ which is an $M$ dimensional vector.
+--
+
+- In many algorithms (including PCA) the solution can be reworked in terms of $\langle\Phi(\bx),\Phi(\bz)\rangle$ (or if you prefer $\Phi(\bx)'\Phi(\bz)$).
+--
+
+- The inner product in the feature space, can be written as a function of $\bx$ and $\bz$, known as the kernel
+$$\langle\Phi(\bx),\Phi(\bz)\rangle=K(\bx,\bz)$$
+
+
+---
+
+# An example
+
+- Consider the mapping $\Phi(\bx)=\left(x_1^2,\dots,x_m^2,\right.$--
+$\sqrt{2}x_1x_2,\dots,\sqrt{2}x_{m-1}x_m,$--
+$\sqrt{2}x_1,\dots,\sqrt{2}x_m,$--
+$\left.1\right)$
+--
+
+- We have gone from an $m$-dimensions to a $M=(m(m+3))/2)+1$ dimensions
+--
+
+- The kernel function is
+
+$$K(\bx,\bz)=(\langle\bx,\bz\rangle+1)^2=\langle\Phi(\bx),\Phi(\bz)\rangle$$
+--
+
+- This is called a polynomial kernel.
+
+---
+
+# Other kernels
+
+- Other kernels are available
+--
+
+  + Gausian kernel
+  + RBF kernel
+--
+
+- These may provide the inner product for infinite dimensional feature spaces.
+--
+
+- The feature space may not be unique.
+
+---
+
+class: inverse, middle, center
+
+# Kernel PCA
+
+---
