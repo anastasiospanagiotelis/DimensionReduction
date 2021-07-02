@@ -151,7 +151,7 @@ add_column(df,pc1=pc1)%>%
 df<-mutate(df,x3=x1^2+x2^2)
 #library(car)
 invisible(open3d())
-plot3d(x=df$x1,y=df$x2,z=df$x3,xlab='x1',ylab='x2',zlab='x3',col=c(rep('black',100),rep('#E69F00',100)))
+plot3d(x=df$x1,z=df$x2,y=df$x3,xlab='x1',ylab='x2',zlab='x3',col=c(rep('black',100),rep('#E69F00',100)))
 rglwidget()
 close3d()
 ```
@@ -251,3 +251,49 @@ class: inverse, middle, center
 # Kernel PCA
 
 ---
+
+# Let's start
+
+- The usual eigenvalue problem for PCA
+
+$$\bC\bv=\lambda\bv$$
+--
+
+- Which can be written as
+
+$$n^{-1}\left(\sum\limits_{i=1}^n\Phi(\bx_i)\Phi(\bx_i)'\right)\bv=\lambda\bv$$
+
+---
+
+# Continuing
+
+- Premultiply both sides by $\Phi(\bx_j)'$
+--
+
+$$n^{-1}\sum\limits_{i=1}^n\Phi(\bx_j)'\Phi(\bx_i)\Phi(\bx_i)'\bv=\lambda\Phi(\bx_j)'\bv$$
+--
+
+- Next trick, recognise that eigenvector lies in span of features so can be written as
+--
+
+$$\bv=\sum_{k=1}^{n}\alpha_k\Phi(\bx_k)$$
+
+---
+
+# Continuing
+
+- Substituting one equation into the other
+--
+
+$$n^{-1}\sum\limits_{i=1}^n\Phi(\bx_j)'\Phi(\bx_i)\Phi(\bx_i)'\sum_{k=1}^{n}\alpha_k\Phi(\bx_k)=$$
+--
+
+$$\lambda\Phi(\bx_j)'\sum_{k=1}^{n}\alpha_k\Phi(\bx_k)$$
+
+---
+
+# The RHS
+
+- The RHS can be written as
+
+$$\lambda\bK\alpha$$
