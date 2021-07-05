@@ -47,6 +47,7 @@ library(tidyverse)
 library(ggthemes)
 library(broom)
 library(rgl)
+library(plotly)
 knitr::knit_hooks$set(webgl = hook_webgl)
 ```
 
@@ -443,6 +444,119 @@ ggplot(df,aes(x=kPCA1,y=kPCA2,label=`Country Code`))+geom_text(size=2)
 
 ---
 
+
+# Image example
+
+- Read in png files of images of the letter 'A' rotated and rescaled.
+--
+
+- There are 124848 variables.
+--
+
+- Only 10898 of these variable have any variation across the images.
+--
+
+- Lesson: Don't try a complicated dimension reduction technique when a simple one is better.
+--
+
+- For these variables run PCA and kPCA.
+
+
+---
+
+# PCA
+
+```{r,cache=TRUE}
+library(png)
+
+filenames<-list.files('../data/images/')
+imagedat<-matrix(0,length(filenames), 124848)
+for(i in 1:length(filenames)){
+  out<-readPNG(paste0('../data/images/',filenames[i]))%>%as.vector()
+  imagedat[i,]<-out
+}
+
+colnames(imagedat)<-paste0('V',str_pad(1:124848,6,'left','0'))
+pix<-as_tibble(imagedat)
+vars<-apply(pix,2,var)
+
+pix<-pix[,(vars>0)]
+pix<-add_column(pix,Image=filenames,.before = 1)
+
+library(dimRed)
+
+im<-as.dimRedData(Image~.,data=pix)
+
+
+pcaout<-embed(.data = im, .method="PCA")
+dfpca<-tibble(cbind(pcaout@data@meta,pcaout@data@data))
+set.seed(9)
+
+ann<-filter(dfpca,(PC2>quantile(dfpca$PC2,0.7)),(PC1>quantile(dfpca$PC1,0.7)))%>%
+  sample_n(1)
+
+ann<-rbind(ann,filter(dfpca,(PC2<quantile(dfpca$PC2,0.3)),(PC1>quantile(dfpca$PC1,0.7)))%>%
+  sample_n(1))
+
+ann<-rbind(ann,filter(dfpca,(PC2>quantile(dfpca$PC2,0.9)),(PC1<quantile(dfpca$PC1,0.2)))%>%
+  sample_n(1))
+
+ann<-rbind(ann,filter(dfpca,(PC2<quantile(dfpca$PC2,0.1)),(PC1<quantile(dfpca$PC1,0.2)))%>%
+  sample_n(1))
+  
+
+sdx<-0.05*(max(dfpca$PC1)-min(dfpca$PC1))
+sdy<-0.05*(max(dfpca$PC2)-min(dfpca$PC2))
+
+ggplot(dfpca,aes(x=PC1,y=PC2,label=Image))+
+  geom_point(size=1)+coord_equal()+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[1])),ymin = ann$PC2[1]-sdy,ymax= ann$PC2[1]+sdy,xmin = ann$PC1[1]-sdx,xmax = ann$PC1[1]+sdx)+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[2])),ymin = ann$PC2[2]-sdy,ymax= ann$PC2[2]+sdy,xmin = ann$PC1[2]-sdx,xmax = ann$PC1[2]+sdx)+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[3])),ymin = ann$PC2[3]-sdy,ymax= ann$PC2[3]+sdy,xmin = ann$PC1[3]-sdx,xmax = ann$PC1[3]+sdx)+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[4])),ymin = ann$PC2[4]-sdy,ymax= ann$PC2[4]+sdy,xmin = ann$PC1[4]-sdx,xmax = ann$PC1[4]+sdx)
+  
+
+```
+
+---
+
+# Kernel PCA
+
+```{r,cache=T}
+kpcaout<-embed(.data = im, .method="kPCA",kpar=list(sigma=0.0018))
+dfpca<-tibble(cbind(kpcaout@data@meta,kpcaout@data@data))
+
+set.seed(2)
+
+
+ann<-filter(dfpca,(kPCA2>quantile(dfpca$kPCA2,0.8)),(kPCA1>quantile(dfpca$kPCA1,0.1)))%>%
+  sample_n(1)
+
+ann<-rbind(ann,filter(dfpca,(kPCA2<quantile(dfpca$kPCA2,0.3)),(kPCA1>quantile(dfpca$kPCA1,0.7)))%>%
+  sample_n(1))
+
+ann<-rbind(ann,filter(dfpca,(kPCA2>quantile(dfpca$kPCA2,0.9)),(kPCA1<quantile(dfpca$kPCA1,1)))%>%
+  sample_n(1))
+
+ann<-rbind(ann,filter(dfpca,(kPCA2<quantile(dfpca$kPCA2,0.3)),(kPCA1<quantile(dfpca$kPCA1,0.3)))%>%
+  sample_n(1))
+  
+
+sdx<-0.05*(max(dfpca$kPCA1)-min(dfpca$kPCA1))
+sdy<-0.08*(max(dfpca$kPCA2)-min(dfpca$kPCA2))
+
+ggplot(dfpca,aes(x=kPCA1,y=kPCA2,label=Image))+
+   geom_point(size=1)+coord_equal()+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[1])),ymin = ann$kPCA2[1]-sdy,ymax= ann$kPCA2[1]+sdy,xmin = ann$kPCA1[1]-sdx,xmax = ann$kPCA1[1]+sdx)+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[2])),ymin = ann$kPCA2[2]-sdy,ymax= ann$kPCA2[2]+sdy,xmin = ann$kPCA1[2]-sdx,xmax = ann$kPCA1[2]+sdx)+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[3])),ymin = ann$kPCA2[3]-sdy,ymax= ann$kPCA2[3]+sdy,xmin = ann$kPCA1[3]-sdx,xmax = ann$kPCA1[3]+sdx)+
+  annotation_raster(readPNG(paste0('../data/images/',ann$Image[4])),ymin = ann$kPCA2[4]-sdy,ymax= ann$kPCA2[4]+sdy,xmin = ann$kPCA1[4]-sdx,xmax = ann$kPCA1[4]+sdx)
+  
+
+```
+
+---
+
 # Conclusion
 
 - Kernel PCA has the advantage of being a non-linear dimension reduction technique.
@@ -455,7 +569,9 @@ ggplot(df,aes(x=kPCA1,y=kPCA2,label=`Country Code`))+geom_text(size=2)
   + Need to choose tuning parameters for the kernel.
   + Eigendecomposition is slow for large $n$, although this can be mitigated by using a kernel that imposes sparsity.
 
+  
 ---
+
 class: center, inverse, middle
 
 # Questions?
