@@ -66,7 +66,7 @@ class: center, middle, inverse
 - As a rough idea consider including polynomials $x^2, x^3,x^4,\dots$ as well as cross products.
 --
 
-- In general, let $\Phi:\bbR^m\rightarrow\bbR^M$ where $M>m$ be a feature map.
+- In general, let $\Phi:\bbR^m\rightarrow\bbR^M$ where $P>p$ be a feature map.
 --
 
 - Rather than carry out principal components on $\bx$, carry out principal components on $\Phi(\bx)$
@@ -158,7 +158,7 @@ close3d()
 
 ---
 
-# First PC
+# First PC with extra feature
 
 ```{r}
 df%>%
@@ -198,7 +198,7 @@ class: inverse, middle, center
 
 # The kernel trick
 
-- Consider $\Phi(\bx)$ which is an $M$ dimensional vector.
+- Consider $\Phi(\bx)$ which is an $P$ dimensional vector.
 --
 
 - In many algorithms (including PCA) the solution can be reworked in terms of $\langle\Phi(\bx),\Phi(\bz)\rangle$ (or if you prefer $\Phi(\bx)'\Phi(\bz)$).
@@ -212,13 +212,13 @@ $$\langle\Phi(\bx),\Phi(\bz)\rangle=K(\bx,\bz)$$
 
 # An example
 
-- Consider the mapping $\Phi(\bx)=\left(x_1^2,\dots,x_m^2,\right.$--
-$\sqrt{2}x_1x_2,\dots,\sqrt{2}x_{m-1}x_m,$--
-$\sqrt{2}x_1,\dots,\sqrt{2}x_m,$--
+- Consider the mapping $\Phi(\bx)=\left(x_1^2,\dots,x_p^2,\right.$--
+$\sqrt{2}x_1x_2,\dots,\sqrt{2}x_{p-1}x_p,$--
+$\sqrt{2}x_1,\dots,\sqrt{2}x_p,$--
 $\left.1\right)$
 --
 
-- We have gone from an $m$-dimensions to a $M=(m(m+3))/2)+1$ dimensions
+- We have gone from an $p$-dimensions to a $P=(p(p+3))/2)+1$ dimensions
 --
 
 - The kernel function is
@@ -454,3 +454,8 @@ ggplot(df,aes(x=kPCA1,y=kPCA2,label=`Country Code`))+geom_text(size=2)
   + Need to choose a kernel.
   + Need to choose tuning parameters for the kernel.
   + Eigendecomposition is slow for large $n$, although this can be mitigated by using a kernel that imposes sparsity.
+
+---
+class: center, inverse, middle
+
+# Questions?
