@@ -64,7 +64,7 @@ $$y_i=w_1x_{i1}+w_2x_{i2}+\dots w_px_{ip}$$
 has the biggest possible variance.
 --
 
-This is called the first principal component (PC).
+- This is the first principal component (PC).
 
 
 ---
@@ -369,12 +369,12 @@ ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+coord_fixed
 
 ```{r,echo=F,fig.height=5.5}
 
-ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+geom_abline(slope=-1,intercept = 0,col='blue')+geom_abline(slope=1,intercept = 0,col='green')+coord_fixed()
+ggplot(wbsimpPC,aes(x=IT.NET.USER.ZS,y=SH.ANM.NPRG.ZS))+geom_point()+geom_abline(slope=-1,intercept = 0,col="#E69F00")+geom_abline(slope=1,intercept = 0,col="#56B4E9")+coord_fixed()
 
 
 ```
 
-First PC projects onto blue line, second PC on to green line.
+First PC projects onto orange line, second PC on to blue line.
 
 ---
 

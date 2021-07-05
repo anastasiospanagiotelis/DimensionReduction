@@ -27,6 +27,7 @@ MathJax.Hub.Config({
   TeX: {
     Macros: {
       bA: "{\\mathbf{A}}",
+      bC: "{\\mathbf{C}}",
       bv: "{\\mathbf{v}}",
       bw: "{\\mathbf{w}}",
       bx: "{\\mathbf{x}}",
@@ -35,8 +36,13 @@ MathJax.Hub.Config({
       bY: "{\\mathbf{Y}}",
       bw: "{\\mathbf{w}}",
       bW: "{\\mathbf{W}}",
+      bK: "{\\mathbf{K}}",
+      bz: "{\\mathbf{z}}",
       bU: "{\\mathbf{U}}",
       bS: "{\\mathbf{S}}",
+      bff: "{\\mathbf{f}}",
+      bD: "{\\mathbf{D}}",
+      bL: "{\\mathbf{L}}",
       calL: "{\\mathcal{L}}",
       calM: "{\\mathcal{M}}",
       bbR: "{\\mathbb{R}}",
@@ -46,7 +52,8 @@ MathJax.Hub.Config({
       bH: "{\\mathbf{H}}",
       bI: "{\\mathbf{I}}",
       biota: "{\\boldsymbol{\\iota}}",
-      bN: "{\\mathbf{N}}"
+      bN: "{\\mathbf{N}}",
+      bQ: "{\\mathbf{Q}}"
       }
   }
 });
@@ -93,7 +100,7 @@ class: center, middle, inverse
 has the biggest possible variance.
 --
 
-This is called the first principal component (PC).
+- This is the first principal component (PC).
 
 
 ---
@@ -188,8 +195,8 @@ wbPC&lt;-augment(pca,wb) #Add PCs to dataframe
 
 # Plot
 
-<div id="htmlwidget-d024ad57bb5e0bb02aff" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d024ad57bb5e0bb02aff">{"x":{"url":"02PCA_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-0def0d31e9b464fb7cdf" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0def0d31e9b464fb7cdf">{"x":{"url":"02PCA_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -334,7 +341,7 @@ SH.ANM.NPRG.ZS = Prev. anaemia non-preg.
 
 &lt;img src="02PCA_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
 
-First PC projects onto blue line, second PC on to green line.
+First PC projects onto orange line, second PC on to blue line.
 
 ---
 
