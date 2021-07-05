@@ -26,6 +26,7 @@ MathJax.Hub.Config({
   TeX: {
     Macros: {
       bA: "{\\mathbf{A}}",
+      bC: "{\\mathbf{C}}",
       bv: "{\\mathbf{v}}",
       bw: "{\\mathbf{w}}",
       bx: "{\\mathbf{x}}",
@@ -34,8 +35,13 @@ MathJax.Hub.Config({
       bY: "{\\mathbf{Y}}",
       bw: "{\\mathbf{w}}",
       bW: "{\\mathbf{W}}",
+      bK: "{\\mathbf{K}}",
+      bz: "{\\mathbf{z}}",
       bU: "{\\mathbf{U}}",
       bS: "{\\mathbf{S}}",
+      bff: "{\\mathbf{f}}",
+      bD: "{\\mathbf{D}}",
+      bL: "{\\mathbf{L}}",
       calL: "{\\mathcal{L}}",
       calM: "{\\mathcal{M}}",
       bbR: "{\\mathbb{R}}",
@@ -45,7 +51,8 @@ MathJax.Hub.Config({
       bH: "{\\mathbf{H}}",
       bI: "{\\mathbf{I}}",
       biota: "{\\boldsymbol{\\iota}}",
-      bN: "{\\mathbf{N}}"
+      bN: "{\\mathbf{N}}",
+      bQ: "{\\mathbf{Q}}"
       }
   }
 });
@@ -13264,6 +13271,9 @@ class: inverse, center, middle
 --
 
 - Common to scale each variable by subtracting the mean and dividing by the standard deviation.
+--
+
+- This is not necessary if all variables measured in common units.
 
 ---
 
@@ -13278,7 +13288,7 @@ class: inverse, center, middle
   + Triangle inequality
 --
 
-- Some functions that do not satisfy all of these axioms will also be considered.
+- Some functions that do not satisfy all of these axioms may also be considered.
 
 ---
 
