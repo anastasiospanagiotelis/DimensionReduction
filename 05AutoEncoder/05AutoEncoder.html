@@ -33,6 +33,7 @@ MathJax.Hub.Config({
       bY: "{\\mathbf{Y}}",
       bw: "{\\mathbf{w}}",
       bW: "{\\mathbf{W}}",
+      bK: "{\\mathbf{K}}",
       bz: "{\\mathbf{z}}",
       bU: "{\\mathbf{U}}",
       bS: "{\\mathbf{S}}",
@@ -63,7 +64,7 @@ MathJax.Hub.Config({
 - Idea behind Autoencoder
 --
 
-- Examples
+- Discussion on software
 
 
 
@@ -78,7 +79,7 @@ class: center, middle, inverse
 
 # Autoencoders are Neural Nets
 
-- Most of you are probably familiar with neural networks
+- Most of you are probably familiar with neural networks.
 --
 
 - The autoencoder is a neural network with a clever trick for dimension reduction.
@@ -114,7 +115,6 @@ class: center, middle, inverse
   + Made up of weights and biases (intercepts) that need to be estimated.
 - The linear combination is passed through a non linear function
   + Sigmoid function
-  + Logistic
   + RELU
 
 ---
@@ -208,6 +208,21 @@ class:inverse, middle, center
 
 ---
 
+# Software
+
+- Can be implemented using the `dimRed` package.
+--
+
+- However this merely wraps around tensorflow
+--
+
+  + Need to have reticulate and Python properly configured
+--
+
+  + Can be a bit time consuming and tricky.
+
+---
+
 # Advantages
 
 - Very flexible and non-linear
@@ -241,13 +256,10 @@ class:inverse, middle, center
 
 class: inverse, middle, center
 
-#Examples
+# Questions?
+
 
 ---
-
-
-
-# Example
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
