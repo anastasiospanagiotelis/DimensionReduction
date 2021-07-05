@@ -8,8 +8,6 @@
     <script src="libs/htmlwidgets/htmlwidgets.js"></script>
     <script src="libs/pymjs/pym.v1.js"></script>
     <script src="libs/widgetframe-binding/widgetframe.js"></script>
-    <script src="libs/kePrint/kePrint.js"></script>
-    <link href="libs/lightable/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/mtheme.css" type="text/css" />
     <link rel="stylesheet" href="../css/mod.css" type="text/css" />
   </head>
@@ -29,6 +27,7 @@ MathJax.Hub.Config({
   TeX: {
     Macros: {
       bA: "{\\mathbf{A}}",
+      bC: "{\\mathbf{C}}",
       bv: "{\\mathbf{v}}",
       bw: "{\\mathbf{w}}",
       bx: "{\\mathbf{x}}",
@@ -37,8 +36,13 @@ MathJax.Hub.Config({
       bY: "{\\mathbf{Y}}",
       bw: "{\\mathbf{w}}",
       bW: "{\\mathbf{W}}",
+      bK: "{\\mathbf{K}}",
+      bz: "{\\mathbf{z}}",
       bU: "{\\mathbf{U}}",
       bS: "{\\mathbf{S}}",
+      bff: "{\\mathbf{f}}",
+      bD: "{\\mathbf{D}}",
+      bL: "{\\mathbf{L}}",
       calL: "{\\mathcal{L}}",
       calM: "{\\mathcal{M}}",
       bbR: "{\\mathbb{R}}",
@@ -48,7 +52,8 @@ MathJax.Hub.Config({
       bH: "{\\mathbf{H}}",
       bI: "{\\mathbf{I}}",
       biota: "{\\boldsymbol{\\iota}}",
-      bN: "{\\mathbf{N}}"
+      bN: "{\\mathbf{N}}",
+      bQ: "{\\mathbf{Q}}"
       }
   }
 });
@@ -150,8 +155,8 @@ wb%&gt;%
 
 # Plot
 
-<div id="htmlwidget-264edaa4b9f7c0eb0ac7" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-264edaa4b9f7c0eb0ac7">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-569606e6c7fb06e60e7d" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-569606e6c7fb06e60e7d">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -199,15 +204,17 @@ class:inverse,middle,center
 - What if a non-Euclidean distance is used?
 --
 
-- In this case classical MDS does not minimise Strain as defined previously.
+- In this case classical MDS does not minimise Strain as defined previously, but minimises `\(tr(\bB-\bB^{*})\)`.
 --
 
-- It has optimality properties in terms of `\(\bB\)`, minimising.
-
-`$$\sum$$`
+- Here `\(\bB^{*}\)` is the doubly centered squared (Euclidean) distance matrix in the output space.
 --
 
 - Distances between output points faithfully represent distances between input points.
+--
+
+- Only use eigenvectors correponding to non-negative eigenvalues
+
 
 ---
 
@@ -268,161 +275,34 @@ wb%&gt;%
 
 #Languages
 
-<div id="htmlwidget-6e6f8e56becd9dc23701" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6e6f8e56becd9dc23701">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-90b35a933b375c9711bb" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-90b35a933b375c9711bb">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
-# Road Distances
+# Distance between pdfs
 
-- Suppose that we have the road distances between different cities in Australia.
+- Consider the electricity smart meter data.
 --
 
-- The road distances are non-Euclidean since roads can be quite wiggly.
+- The distance between pdfs can be measured using a Jensen Shannon distance.
 --
 
-- We want to create a 2-dimensional map with the locations of the cities using only these road distances.  
+- This is the square root of the average of the Kullback Leibler divergence from `\(P\)` to `\(Q\)` and from `\(Q\)` to `\(P\)`.
 --
 
-- Classical MDS can give an approximation that is quite close to a real map.
+- For a log normal distribution this is available in closed form.
+--
+
+- Consider one household so that each observation corresponds to a time of week.
 
 ---
 
-# Road Distances
 
-Road distances between Australian cities.
+# Distance between pdfs
 
-&lt;table class="table table-striped table-hover table-condensed" style="font-size: 14px; margin-left: auto; margin-right: auto;"&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Cairns &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Brisbane &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Sydney &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Melbourne &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Adelaide &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Perth &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Darwin &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Alice Springs &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Cairns &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1717 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2546 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3054 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3143 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 5954 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2727 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2324 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Brisbane &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1717 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 996 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1674 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2063 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4348 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3415 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3012 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Sydney &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2546 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 996 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 868 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1420 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4144 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4000 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2644 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Melbourne &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3054 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1674 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 868 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 728 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3452 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3781 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2270 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Adelaide &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3143 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2063 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1420 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 728 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2724 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3053 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1542 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Perth &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 5954 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4348 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4144 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3452 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2724 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4045 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3630 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Darwin &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2727 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3415 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4000 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3781 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3053 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4045 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1511 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Alice Springs &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2324 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3012 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2644 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 2270 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1542 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3630 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1511 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
----
-
-# Australia
-
-
-&lt;img src="03MDS_files/figure-html/ozmap-1.png" style="display: block; margin: auto;" /&gt;
-
----
-
-# MDS Solution
-
-&lt;img src="03MDS_files/figure-html/mdsoz-1.png" style="display: block; margin: auto;" /&gt;
-
----
-
-# Rotate
-
-&lt;img src="03MDS_files/figure-html/mdsoz2-1.png" style="display: block; margin: auto;" /&gt;
-
----
-
-# Back with Map
-
-&lt;img src="03MDS_files/figure-html/mdssolmap-1.png" style="display: block; margin: auto;" /&gt;
-
+<div id="htmlwidget-a059c8a2acd8a43a3e08" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a059c8a2acd8a43a3e08">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-7.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 class: inverse, middle, center
@@ -503,25 +383,25 @@ class: inverse, middle, center
 
 # Original Data
 
-&lt;img src="03MDS_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Original Data
 
-&lt;img src="03MDS_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Rotate (Classical Solution)
 
-&lt;img src="03MDS_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Keep 1 Dimension
 
-&lt;img src="03MDS_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -529,7 +409,7 @@ class: inverse, middle, center
 
 # Sammon Mapping
 
-&lt;img src="03MDS_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="03MDS_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
 
 
 ---
