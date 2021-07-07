@@ -142,7 +142,7 @@ add_column(df,pc1=pc1)%>%
 - Then we we carry out PCA on $x_1$, $x_2$ and $x_3$
 --
 
-- Will the first principle component separate out the black and yellow points.
+- Will the first principal component separate out the black and yellow points.
 
 ---
 
@@ -219,7 +219,7 @@ $\sqrt{2}x_1,\dots,\sqrt{2}x_p,$--
 $\left.1\right)$
 --
 
-- We have gone from an $p$-dimensions to a $P=(p(p+3))/2)+1$ dimensions
+- We have gone from an $p$-dimensional vector to a $P=(p(p+3))/2)+1$ dimensional vector.
 --
 
 - The kernel function is
