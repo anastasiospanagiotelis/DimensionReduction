@@ -23,7 +23,7 @@ All slides were made using Yihui Xie's [Xaringan](https://github.com/yihui/xarin
 
 The notes are my own but much of the course is inspired by the excellent text 
 
-- Izenman, A. J. (2008). "Modern multivariate statistical techniques. Regression, classification and manifold learning."](https://www.springer.com/gp/book/9780387781884), Springer. 
+- Izenman, A. J. (2008). ["Modern multivariate statistical techniques. Regression, classification and manifold learning."](https://www.springer.com/gp/book/9780387781884), Springer. 
 
 In particular Chapter 7 (especially section 7.2), Chapter 13 and Chapter 16 provide a good supplement to this course.
 
