@@ -17,7 +17,7 @@ This short course covers:
 9. Laplacian Eigenmaps 
 10. Evaluation of Dimension Reduction techniques
 
-All slides were made using Yihui Xie's [Xaringan](https://github.com/yihui/xaringan) package.  They are available on my personal website (LINK COMING). They can be printed as pdf files using a browser with Google Chrome generally working best. Note that many of the plots are interactive and will not render well when printed as pdf.
+All slides were made using Yihui Xie's [Xaringan](https://github.com/yihui/xaringan) package.  They are available on my [personal website](https://anastasiospanagiotelis.netlify.app/teaching/dimred/) (LECTURES 6-10 COMING SOON). They can be printed as pdf files using a browser with Google Chrome generally working best. Note that many of the plots are interactive and will not render well when printed as pdf.
 
 ## Textbook
 
