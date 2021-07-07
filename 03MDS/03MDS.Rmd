@@ -273,7 +273,7 @@ colnames(df)[1:2]<-c("Comp. 1", "Comp. 2")
 
 ggplot(df,aes(x=`Comp. 1`,y=`Comp. 2`,label=Word,text=Language))+geom_text()->g1
 
-ggplotly(g1,tooltip = 'label')%>%frameWidget()
+ggplotly(g1,tooltip = 'text')%>%frameWidget()
 
 
 ```
