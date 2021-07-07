@@ -22,10 +22,14 @@ output:
 - Neural Network
 --
 
+  + For a course on Neural Networks see the course in this Winter School by Susan Wei and Robert Salomone.
+--
+
 - Idea behind Autoencoder
 --
 
-- Discussion on software
+  + Has the same input and output.
+  + Is narrow in the middle.
 
 
 ```{r setup, include=FALSE}
@@ -47,7 +51,7 @@ class: center, middle, inverse
 
 # Autoencoders are Neural Nets
 
-- Most of you are probably familiar with neural networks.
+- Many of you are probably familiar with neural networks.
 --
 
 - The autoencoder is a neural network with a clever trick for dimension reduction.
@@ -202,20 +206,6 @@ plotnet(ae,bias=FALSE,node_labs=FALSE,nid=FALSE)
 
 ---
 
-# Software
-
-- Can be implemented using the `dimRed` package.
---
-
-- However this merely wraps around tensorflow
---
-
-  + Need to have reticulate and Python properly configured
---
-
-  + Can be a bit time consuming and tricky.
-
----
 
 # Advantages
 
@@ -230,6 +220,21 @@ plotnet(ae,bias=FALSE,node_labs=FALSE,nid=FALSE)
 --
 
 - Plenty of software and efficient packages
+
+---
+
+# Software
+
+- Can be implemented using the `dimRed` package.
+--
+
+- However this merely wraps around tensorflow
+--
+
+  + Need to have reticulate and Python properly configured
+--
+
+  + Can be a bit time consuming and tricky.
 
 ---
 
@@ -251,7 +256,4 @@ plotnet(ae,bias=FALSE,node_labs=FALSE,nid=FALSE)
 class: inverse, middle, center
 
 # Questions?
-
-
----
 
