@@ -285,7 +285,7 @@ class: center, middle, inverse
 
 ---
 
-# Swiss roll
+# S Curve
 
 ```{r,echo=T,eval=F}
 dat <- loadDataSet("3D S Curve")

@@ -324,14 +324,14 @@ text(-0.23,-0.23,'x',col='blue',cex=2)
 - Let $x$ be a point on a manifold $\calM$ and let $U$ be a neighbourhood of $x$.
 --
 
-- Locally homeomorphic to Euclidean space, means that there is a mapping (called a chart) $f:U\rightarrow \bbR^m$
+- Locally homeomorphic to Euclidean space, means that there is a mapping (called a chart) $\phi:U\rightarrow \bbR^m$
 --
 
 - A collection of charts covering the whole manifold is called an atlas.
 
 ---
 
-# Sphere
+# Chart
 
 ```{r, eval=TRUE,echo=FALSE, out.height=550}
 
@@ -357,7 +357,7 @@ knitr::include_graphics('img/chart.jpg')
 
 ---
 
-# Sphere
+# Earth
 
 ```{r, eval=TRUE,echo=FALSE}
 

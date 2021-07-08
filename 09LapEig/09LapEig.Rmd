@@ -141,7 +141,7 @@ $$df=\frac{\partial f}{\partial x_1}dx_1+\frac{\partial f}{\partial x_2}dx_2+\do
 $$\frac{\partial^2 f}{\partial x^2_1}+\frac{\partial^2 f}{\partial x^2_2}+\dots+\frac{\partial^2 f}{\partial x^2_m}$$
 --
 
-- A local average around any point $x$ can be approximated in a way that depends on the Laplacian.
+- A local average of the function around any point $x$ can be approximated in a way that depends on the Laplacian.
 --
 
 - The Laplacian indicates whether points in the neigbourhood of $x$ are "hotter" or "colder" than $x$.
@@ -174,7 +174,7 @@ The gradient of $f$, denoted $\nabla f$ where $f:\calM\rightarrow\bbR$ is a vect
 --
 
 $$df=g_\bx(\nabla f,d\bv)$$
-where $g_\bx(.,.)$ is the Riemannian (an inner product on the tangent space at $x$) and $\bv$ is a tangent vector.
+where $g_\bx(.,.)$ is the Riemannian (an inner product on the tangent space at $x$) and $d\bv$ is an infintessimal tangent vector.
 
 ---
 
@@ -233,7 +233,7 @@ class: inverse, middle, center
 - To solve this need to discretise the problem
 --
 
-  + Functions become vectors (function evalutated at each point of data)
+  + Functions become vectors (function evaluated at each point of data)
   + Integrals become sums (over data points)
   + Operators become matrices
 --
@@ -508,7 +508,7 @@ plot(leoutsr, type = "2vars")
 
 ---
 
-# Laplacian Eigenmaps (k-30)
+# Laplacian Eigenmaps (k=30)
 
 ```{r,echo=T}
 leoutsr2 <- embed(datsr, "LaplacianEigenmaps",knn=30)
