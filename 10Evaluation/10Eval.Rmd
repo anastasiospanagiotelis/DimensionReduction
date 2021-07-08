@@ -101,10 +101,10 @@ $$\begin{align}\rho_{ij}&=\left\{k:\delta_{ik}<\delta_{ij}\right\}\\r_{ij}&=\lef
 - Let the matrix $\bQ$ have elements
 --
 
-$$q_{kl}=\left\{(i,j):d_{ij}=k,\delta_{ij}=l\right\}$$
+$$q_{kl}=|\left\{(i,j):d_{ij}=k,\delta_{ij}=l\right\}|$$
 --
 
-- This counts the number of times a distance ranked $l$ in the input space is ranked $k$ in the output space.
+- This counts the number of pairs for which a distance ranked $l$ in the input space is ranked $k$ in the output space.
 --
 
 - Non-zeros in lower triangle indicate distant input points collapsed together.
@@ -138,8 +138,8 @@ close3d()
 # Isomap (K=20)
 
 ```{r,echo=T,cache=TRUE}
-isoout <- embed(dat, "Isomap", knn = 20)
-plot(isoout, type = "2vars")
+isoout20 <- embed(dat, "Isomap", knn = 20)
+plot(isoout20, type = "2vars")
 
 ```
 
@@ -149,7 +149,7 @@ plot(isoout, type = "2vars")
 
 ```{r,cache=TRUE}
 library(coRanking)
-Q<-coranking(dat@data,isoout@data@data,input_Xi = "data")
+Q<-coranking(dat@data,isoout20@data@data,input_Xi = "data")
 imageplot(Q)
 ```
 
@@ -158,8 +158,8 @@ imageplot(Q)
 # Isomap (K=4)
 
 ```{r,cache=TRUE,echo=T}
-isoout <- embed(dat, "Isomap", knn = 4)
-plot(isoout, type = "2vars")
+isoout4 <- embed(dat, "Isomap", knn = 4)
+plot(isoout4, type = "2vars")
 
 ```
 
@@ -169,7 +169,7 @@ plot(isoout, type = "2vars")
 
 ```{r,cache=TRUE}
 library(coRanking)
-Q<-coranking(dat@data,isoout@data@data,input_Xi = "data")
+Q<-coranking(dat@data,isoout4@data@data,input_Xi = "data")
 imageplot(Q)
 ```
 
@@ -177,8 +177,8 @@ imageplot(Q)
 # Isomap (K=500)
 
 ```{r,echo=T,cache=T}
-isoout <- embed(dat, "Isomap", knn = 500)
-plot(isoout, type = "2vars")
+isoout500 <- embed(dat, "Isomap", knn = 500)
+plot(isoout500, type = "2vars")
 
 ```
 
@@ -188,7 +188,7 @@ plot(isoout, type = "2vars")
 
 ```{r,cache=TRUE}
 library(coRanking)
-Q<-coranking(dat@data,isoout@data@data,input_Xi = "data")
+Q<-coranking(dat@data,isoout500@data@data,input_Xi = "data")
 imageplot(Q)
 ```
 
@@ -214,7 +214,136 @@ imageplot(Q)
 - The local continuity meta criterion can be expressed in terms of the $\bQ$ matrix as
 --
 
-$$LCMC=\frac{K}{1-N}+\frac{1}{NK}\sum\limits_{k=1}^K\sum\limits_{k=1}^K q_{kl}$$
+$$LCMC=\frac{H}{1-N}+\frac{1}{NH}\sum\limits_{h=1}^H\sum\limits_{h=1}^H q_{hl}$$
 --
 
-- The parameter $K$ does not need to be the same as the nearest neighbours used in the manifold learning algorithm
+- The parameter $H$ does not need to be the same as the nearest neighbours used in the manifold learning algorithm
+
+---
+
+# LCMC
+
+```{r,message=FALSE}
+library(plotly)
+df<-tibble(`k=20`=dimRed::LCMC(isoout20),`k=4`=dimRed::LCMC(isoout4),`k=500`=dimRed::LCMC(isoout500))
+df%>%add_column(H=1:nrow(df),.before = 1)->df
+
+df%>%
+  filter(H<500)%>%
+  pivot_longer(-H,names_to='k',values_to='LCMC')%>%
+  ggplot(aes(x=H,y=LCMC,col=k))+geom_line()+scale_color_colorblind()->g
+
+ggplotly(g)
+
+```
+
+---
+
+class: inverse, middle, center
+
+# Geometric Properties
+
+---
+
+# Topology v Geometry
+
+- Quality measures so far based on ranks of distances.
+--
+
+- Only measure how well algorithm preserves the topology of manifold.
+--
+
+- Interpreting the output of manifold learning often involves comments about distances, angles, and shapes of scatterplots.
+--
+
+- Makes sense to have a measure that reflects whether these quantities are preserved.
+
+---
+
+# Local Procrustes measure
+
+- Take a small neighbourhood of $k$ points around input point $i$
+  + Stack into a $p\times k$ matrix $\bX_{(i)}$ with columns $\bx_j:\bx_j\in N(\bx_i)$
+  + Stack into a $m\times k$ matrix $\bY_{(i)}$ with columns $\by_j:\bx_j\in N(\bx_i)$
+--
+
+- Rotate and translate into a $p$-dimensional space.
+--
+
+  + This is done via $\bA\bY_{(i)}+\bbb$ where $\bA'\bA=\bI$
+--
+
+- Do this so $\bX_{(i)}$ and $\bY_{(i)}$ "match" up
+
+---
+
+# Why "Procrustes"?
+
+```{r}
+
+knitr::include_graphics('img/Prokroustis.jpg')
+
+```
+
+---
+
+# Procrustes Analysis
+
+- Procrustes Analysis is all about matching up similar shapes.
+--
+
+- Used in biology and computer vision (amongst other areas).
+--
+
+- The version we consider only allows for translations and rotations since other distortions would distort the geometry of our points.
+
+
+---
+
+# Local Procrustes Measure
+
+- For all $i$ find
+--
+$$G(\bX_{(i)},\bY_{(i)})=\underset{\bA,\bbb:\bA'\bA=\bI}{\min}||(\bX_{(i)}-\bA\bY_{(i)}-\iota\bbb')||_F$$
+--
+
+- The values of $\bA$ and $\bbb$ can be solved using the singular value decomposition.
+--
+
+- The overall measure is given by
+--
+$$G=\sum\limits_{i=1}^{N}\frac{G(\bX_{(i)},\bY_{(i)})}{||\bH\bX_{(i)}||^2_F}$$
+
+---
+
+class: inverse, center, middle
+
+# Concluding Remarks
+
+---
+
+# Concluding Remarks
+
+- Hopefully you now appreciate the value of dimension reduction algorithms.
+--
+
+- You should now be able to potentially apply these algorithms to your own research problems.
+--
+
+- Also I hope you have an appreciation on how dimension reduction algorithms draw on different fields of mathematics.
+
+---
+
+# Open problems
+
+- Finding the dimension of the manifold.
+--
+
+- Finding tuning parameters.
+--
+
+- Better understanding of why and when certain algorithms perform better.
+--
+
+- Better understanding of non-uniform sampling on a manifold 
+
