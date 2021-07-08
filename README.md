@@ -19,6 +19,8 @@ This short course covers:
 
 All slides were made using Yihui Xie's [Xaringan](https://github.com/yihui/xaringan) package.  They are available on my [personal website](https://anastasiospanagiotelis.netlify.app/teaching/dimred/) (LECTURES 6-10 COMING SOON). They can be printed as pdf files using a browser with Google Chrome generally working best. Note that many of the plots are interactive and will not render well when printed as pdf.
 
+If you want to build the slides yourself, simply clone the repository. Note that you will have to run the command ```xaringan::summon_remark()``` once before knitting the r markdown document.
+
 ## Textbook
 
 The notes are my own but much of the course is inspired by the excellent text 
