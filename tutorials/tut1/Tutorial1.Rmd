@@ -1,0 +1,227 @@
+---
+params: 
+  sub_title:
+    input: text
+    label: Sub Title
+    value: 'my_Sub_Title_and_File_Name'
+title    : "Dimension Reduction, AMSI 2021 Winter School"
+subtitle : "`r params$sub_title`"
+author: 'Anastasios Panagiotelis'
+date: 'July 13, 2021'
+output:
+  pdf_document:
+    keep_tex: false
+knit: (
+  function(inputFile, encoding) { 
+
+    pSubTitle <- 'Tutorial 1'
+
+    rmarkdown::render( 
+      input       = inputFile, 
+      encoding    = encoding, 
+      params      = list(sub_title = pSubTitle),      
+      output_file = pSubTitle) })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+sols=(params$sub_title=='Tutorial 1 Solutions')
+```
+
+## R Markdown
+
+### World Bank Data
+
+Carry out principal components on the World Bank data (`WorldBankClean.csv`) and answer the following questions. To answer the questions run the command `?prcomp` to see the help documentation of the function used to create principal components.
+
+```{r, echo=sols,eval=sols,message=F}
+library(tidyverse)
+wb<-read_csv('../../data/WorldBankClean.csv')
+
+wb%>%
+  select_if(is.numeric)%>%
+  scale()%>%
+  prcomp()->pcaout
+
+
+
+```
+
+
+1. Do you scale the data before applying principal components? Why or why not?
+
+`r if(sols) '*The data are all measured in different units, for example FX.OWN.TOTL.ZS (Account ownership at a financial institution or with a mobile-money-service provider) is measured in percentage of population aged above 15 years, while FB.ATM.TOTL.P5 (Automated teller machines (ATMs)) is measured in per 100,000 adults while TX.VAL.TECH.CD (High-technology exports) is measured in $US. The variance of each variable will be sensitive to the units of measurement, for example measuring FX.OWN.TOTL.ZS in per 100,000 adults and TX.VAL.TECH.CD in millions of $US will change the relative variance.*'`
+
+`r if(sols) '*Since PCA is a technique that explains variance, it will therefore be sensitive to changes in the units of measurement. To avoid this sensitivity, we standardise all variables, by dividing by the standard deviation so that each variable has a variance of 1.*'`
+
+2. What is the standard deviation of the first principal component?
+
+`r if(sols) '*All standard deviations are contained in the* sdev *value of a* prcomp *object.*'`
+
+```{r, echo=sols,eval=sols,message=F}
+pcaout$sdev[1]
+```
+
+`r if(sols) '*Alternatively much information can be seen using the summary function (output not shown).*'`
+
+```{r, echo=sols,eval=sols,message=F, eval=F}
+summary(pcaout)
+```
+
+`r if(sols) paste('*The standard deviation of the first PC is ', round(pcaout$sdev[1],2), '.*')`
+
+3. How many principal components are needed to explain at least 90% of the total variance?
+
+`r if(sols) '*The output can be seen from the output of the summary function. A piece of code that gives the anser is*'`
+
+```{r, echo=sols,eval=sols,message=F}
+library(tidyverse)
+#Compute proportion of explained variance
+prop_exp_var<-cumsum(pcaout$sdev^2)/sum(pcaout$sdev^2)
+#Compute number of PCs for cumulative to be at least 90%
+ans<-sum(prop_exp_var<0.9)+1
+```
+
+`r if(sols) paste('*There are', ans, 'principal components needed to explain at least 90% of the overall variance in the data*')`
+
+4. Plot the first two principal components of the data as a scatterplot.  Use the country abbreviation rather than a points
+
+`r if(sols) '*All standard deviations are contained in the* sdev *value of a* prcomp *object.*'`
+
+```{r, echo=sols,eval=sols,message=F}
+library(broom)
+wbPC<-augment(pcaout,wb)
+
+wbPC%>%
+  ggplot(aes(x=.fittedPC1, #First PC on x axis
+             y=.fittedPC2, #Second PC on y axis
+             label=`Country Code`))+ #Rather than points use country code as label.
+  geom_text(size=2)+ #geom_text uses text rather than points
+  xlab('Principal Component 1')+ #Better labels on axes
+  ylab('Principal Component 2')+ #Better labels on axes
+  coord_equal() # See discussion below
+
+```
+
+`r if(sols) '*Note that the argument coord_equal is used for the plot. This ensures that 1 unit on the x axis is the sample length as 1 unit on the y axis. Most software that creates a scatterplot will not have this property by default.*'`
+
+`r if(sols) '*Why is this important? Often when we look at a PCA scatterplot we are tempted to make conclusions about points that are close to one another. What we see as close should not be distorted by a rescaling of the axes.*'`
+
+5. What are the loadings (weights) on the first principal component of infant mortality rate (SP.DYN.IMRT.IN- variable 78) and number of pupils in primary education (SE.PRM.ENRL - variable 123).
+
+```{r, echo=sols,eval=sols,message=F}
+ans1<-pcaout$rotation["SP.DYN.IMRT.IN","PC1"]
+ans2<-pcaout$rotation["SE.PRM.ENRL","PC1"]
+```
+
+`r if(sols) paste('*The weight of infant mortality rate on the first principal component is', round(ans1,2), 'and the weight of pupils in primary education on the first principal component is', round(ans2,2),'*.')`
+
+6. What are the loadings (weights) on the second principal component of infant mortality rate (SP.DYN.IMRT.IN- variable 78) and number of pupils in primary education (SE.PRM.ENRL - variable 123).
+
+```{r, echo=sols,eval=sols,message=F}
+ans1<-pcaout$rotation["SP.DYN.IMRT.IN","PC2"]
+ans2<-pcaout$rotation["SE.PRM.ENRL","PC2"]
+```
+
+`r if(sols) paste('*The weight of infant mortality rate on the second principal component is', round(ans1,2), 'and the weight of pupils in primary education on the second principal component is', round(ans2,2),'*.')`
+
+7. Do these results make sense in light of our interpretation of the first PC measuring level of development and the second PC measuring the size of a country?
+
+`r if(sols) '*Larger values of the infant mortality rate are associated with lower values of the first principal component (since the weight is negative). This is consistent with the first PC measuring the development of a country.  The weight of number of pupils in primary education is close to zero (and slightly negative) which at first might seem counter-intuitive since more students in school should be an indicator of development.  The problem here is that while infant mortality is a rate, the number of pupils is a raw figure.  DR Congo has a larger population that France as well as a much younger age profile therefore has more students in primary education. For this reason, the weight on pupils in primary education is high (in absolute terms) for the second PC. A larger number of students is associated with a smaller value of PC2 while the infant mortality rate has very little contribution to PC2.*'`
+
+8. Run kernel PCA using the `dimRed` package. Use a polynomial kernel with a degree of 3, a scale of 0.001 and an offset of 1. Use `?kPCA-class` and `kpca` to consult the help documentation of the function in the `dimRed` package and the original function from the `kernlab` package that it wraps around.
+
+
+```{r, echo=sols,eval=sols,message=F}
+
+
+library(dimRed)
+wb%>%
+  mutate_if(is.numeric,scale)%>% #Scale Data
+  as.dimRedData(`Country Name` + `Country Code`~.,data=.)->wbdr #Convert to S4 class
+kpcaout <- embed(.data = wbdr, 
+                 .method="kPCA",
+                 kernel='polydot',
+                 kpar=list(degree=3,scale=0.001,offset=1))
+df<-tibble(cbind(kpcaout@data@meta,kpcaout@data@data)) # Convert back to a dataframe
+ggplot(df,aes(x=kPCA1,y=kPCA2,label=`Country Code`))+geom_text(size=2) #Plot
+
+```
+
+### Irish Smart Meter data
+
+1. Using the household with ID=4669 for th Irish smart meter data, find the location and scale parameter from fitting electricity demand for each time of week with a lognormal distribution 
+
+HINT 1: You only need to take the log of the data then find the mean and standard deviation but you will need to remove a small number of observations for which demand is 0.
+
+HINT 2: The `filter` function can be used to remove zeros, the `mutate` to take the log and the `group_by` and `summarise` functions can be used to find means and standard deviations by the time of week (`tow`) variable. These are all functions from the `tidyverse`.
+
+```{r, echo=sols,eval=sols,message=F}
+sm<-read_csv('../../data/SmartMeter.csv')
+sm%>%filter(id==4669)%>%
+  filter(demand>0)%>%
+  mutate(logd=log(demand))%>%
+  group_by(tow)%>%
+  summarise(mu=mean(logd,na.rm=TRUE),sigma2=var(logd,na.rm=TRUE))->pars
+```
+
+2. Compute the Jensen Shannon distance (JSD) between all pairs. Remember that the JSD is the square root of the average of the Kullback Leibler divergence from P to Q and the Kullback Leibler divergence from Q to P. The Kullback Leibler divergence from P to Q for a lognormal distribution is given by.
+
+$$\log\sigma^2_Q-\log(\sigma^2_P)+\frac{\sigma^2_P+(\mu_P-\mu_Q)^2}{2\sigma^2_Q}-0.5$$
+
+```{r, echo=sols,eval=sols,message=F}
+n<-nrow(pars)
+klds<-matrix(0,n,n)
+for (i in 1:n){
+  for (j in 1:n){
+    if(i!=j){
+      mui<-pars$mu[i]
+      muj<-pars$mu[j]
+      sigma2i<-pars$sigma2[i]
+      sigma2j<-pars$sigma2[j]
+      klds[i,j]<-log(sigma2j)-log(sigma2i)+
+        ((sigma2i+(mui-muj)^2)/(2*sigma2j))-0.5
+    }
+  }
+}
+jsds<-sqrt((klds+t(klds))/2)
+
+```
+
+3. Construct similar to the one on [slide 20 of Lecture 3](https://anastasiospanagiotelis.netlify.app/teaching/amsi2021/03mds/03mds#52). Use the 
+
+```{r, echo=sols,eval=sols,message=F}
+
+jsds%>%
+  as.dist%>%
+  cmdscale()%>%
+  cbind(pars)->df
+
+colnames(df)[1:2]<-c("Comp. 1", "Comp. 2")
+
+
+ggplot(df,aes(x=`Comp. 1`,y=`Comp. 2`))+geom_point()
+
+```
+
+4. There are six points with a very high value on the first coordinate and a low value on the second coordinate. What do he points in this underlying group have in common. HINT: To investigate use the `arrange` function
+
+`r if(sols) '*Using the arrange function we can see which values have the highest value of Component 1.*'`
+
+```{r, echo=sols,eval=sols,message=F}
+arrange(df,desc(`Comp. 1`))%>%head(10)
+```
+
+`r if(sols) '*The six outlying times of week are also the six times of week with the highest mean.*'`
+
+```{r, echo=sols,eval=sols,message=F}
+arrange(df,desc(mu))%>%head(10)
+```
+
+`r if(sols) '*The six outlying times of week occur at the same time of day.*'`
+
+```{r, echo=sols,eval=sols,message=F}
+c(39,87,279,231,135,183)%%48
+```
+
+`r if(sols) '*From this investigation we can conclude that this particular houshold has higher than average usage at 7:30 PM.*'`

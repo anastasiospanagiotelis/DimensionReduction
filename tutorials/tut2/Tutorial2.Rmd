@@ -1,0 +1,47 @@
+---
+params: 
+  sub_title:
+    input: text
+    label: Sub Title
+    value: 'my_Sub_Title_and_File_Name'
+title    : "Dimension Reduction, AMSI 2021 Winter School"
+subtitle : "`r params$sub_title`"
+author: 'Anastasios Panagiotelis'
+date: 'July 15, 2021'
+output:
+  pdf_document:
+    keep_tex: false
+knit: (
+  function(inputFile, encoding) { 
+
+    pSubTitle <- 'Tutorial 2'
+
+    rmarkdown::render( 
+      input       = inputFile, 
+      encoding    = encoding, 
+      params      = list(sub_title = pSubTitle),      
+      output_file = pSubTitle) })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+sols=(params$sub_title=='Tutorial 2 Solutions')
+```
+
+## R Markdown
+
+This is an R Markdown document.
+
+1. Question.
+
+`r if(sols) '*Answer.*'`
+
+2. Another question.
+
+```{r, echo=sols,eval=sols,message=F}
+library(tidyverse)
+a<-1
+b<-2
+a+b
+
+```
