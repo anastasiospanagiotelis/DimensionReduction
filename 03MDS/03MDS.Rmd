@@ -330,7 +330,7 @@ for (i in 1:n){
     }
   }
 }
-jsds<-(klds+t(klds))/2
+jsds<-sqrt((klds+t(klds))/2)
 
 df<-cbind(cmdscale(as.dist(jsds)),pars)
 colnames(df)[1:2]<-c("Comp. 1", "Comp. 2")
