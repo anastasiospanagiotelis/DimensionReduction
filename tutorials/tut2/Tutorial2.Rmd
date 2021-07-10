@@ -14,7 +14,7 @@ output:
 knit: (
   function(inputFile, encoding) { 
 
-    pSubTitle <- 'Tutorial 2'
+    pSubTitle <- 'Tutorial 2 Solutions'
 
     rmarkdown::render( 
       input       = inputFile, 
@@ -28,20 +28,171 @@ knitr::opts_chunk$set(echo = TRUE)
 sols=(params$sub_title=='Tutorial 2 Solutions')
 ```
 
-## R Markdown
+## Images Data - Cleaning
 
-This is an R Markdown document.
+1. Using the images data construct a matrix where each row corresponds to an image and each column to a color channel (R, G or B) of an individual pixel.
 
-1. Question.
-
-`r if(sols) '*Answer.*'`
-
-2. Another question.
+`r if(sols) '*This answer assumes you have downloaded the images data locally (by cloning the github repo. Alternatively you can download the data directly from online by replacing the local file location with a url.*'`
 
 ```{r, echo=sols,eval=sols,message=F}
 library(tidyverse)
-a<-1
-b<-2
-a+b
+library(png)
+library(dimRed)
+filenames<-list.files('../../data/images/')
+# First store everything in a matrix
+imagedat<-matrix(0,length(filenames), 124848) #Initialise matrix 
+for(i in 1:length(filenames)){
+  out<-readPNG(paste0('../../data/images/',filenames[i]))%>%as.vector()
+  imagedat[i,]<-out
+}
+#Make column names easier to read
+colnames(imagedat)<-paste0('V',str_pad(1:124848,6,'left','0'))
+```
+
+2. Find all variables which have no variation across the images and remove them.
+
+```{r, echo=sols,eval=sols,message=F}
+vars<-apply(imagedat,2,var)
+imagedat<-imagedat[,(vars>0)]
+```
+
+3. Convert the matrix to a data frame and add a column to your dataframe with the name of each file.
+
+```{r, echo=sols,eval=sols,message=F}
+pix<-as_tibble(imagedat)
+pix<-add_column(pix,Image=filenames,.before = 1)
+head(pix)
 
 ```
+
+## Images Data - Dimension Reduction
+
+1. Carry out PCA and ISOMAP using the `dimRed` package (note some commands may take about 20-30 second to run - be patient!). Use the function defaults for output dimension and tuning parameters.
+
+```{r, echo=sols,eval=sols,message=F,cache=T}
+#Get into the necessary S4 class
+im<-as.dimRedData(Image~.,data=pix)
+pcaout<-embed(.data = im, .method="PCA")
+isoout<-embed(.data = im, .method="Isomap")
+```
+
+2. For PCA and isomap, plot a scatterplot.
+
+`r if(sols) '*Plot for PCA*'`
+
+```{r, echo=sols,eval=sols,message=F}
+
+dfpca<-tibble(cbind(pcaout@data@meta,pcaout@data@data))
+
+ggplot(dfpca,aes(x=PC1,y=PC2,label=Image))+
+  geom_point(size=1)+coord_equal()
+```
+
+`r if(sols) '*Plot for Isomap*'`
+
+```{r, echo=sols,eval=sols,message=F}
+
+dfiso<-tibble(cbind(isoout@data@meta,isoout@data@data))
+ggplot(dfiso,aes(x=`iso 1`,y=`iso 2`,label=Image))+
+  geom_point(size=1)+coord_equal()
+
+```
+
+## Local continuity meta criterion
+
+1. Compute the local continuity meta criterion (LCMC) for PCA and Isomap. Compare the LCMC across all both methods when the number of nearest neighbours used to compute the LCMC is 50. (Note this can be a bit slow)
+
+
+```{r, echo=sols,eval=sols,message=F,cache=T}
+
+
+lcmc_pca<-dimRed::LCMC(pcaout)
+lcmc_iso<-dimRed::LCMC(isoout)
+
+
+```
+
+`r if(sols) paste('*The LCMC is*', round(lcmc_pca[30],3), '*for PCA and*', round(lcmc_iso[30],3),'*for Isomap.*')`
+
+
+2. Carry out PCA using 3 PCs and recompute the LCMC.
+
+```{r, echo=sols,eval=sols,message=F,cache=T}
+pcaout3<-embed(.data = im, .method="PCA",ndim=3)
+lcmc_pca3<-dimRed::LCMC(pcaout3)
+
+```
+
+`r if(sols) paste('*The LCMC is*', round(lcmc_pca3[30],3), '*when 3 PCs are used instead of 2 PCs.*')`
+
+3. Carry out isomap using 20 nearest neighbours (and two output dimensions) and recompute the LCMC.
+
+```{r, echo=sols,eval=sols,message=F,cache=T}
+isoout20<-embed(.data = im, .method="Isomap",knn=20)
+
+lcmc_iso20<-dimRed::LCMC(isoout20)
+```
+
+`r if(sols) paste('*The LCMC is*', round(lcmc_iso20[30],3), '*when 20 nearest neigbours are used to compute the Isomap output.*')`coRanking;
+
+4. Compare the LCMC from your answers in 1-3. What do you conclude?
+
+`r if(sols) 'The LCMC is higher for Isomap than for PCA which is reasonable since Isomap is a non-linear method. If the number of output dimensions is increased for PCA the quality of the output improves. The performance of Isomap can be improved while keeping the same number of output dimensions, by choosing a different value of nearest neighbours. The main takeway messages are that a linear technique may need more dimensions to achieve the same level of accuracy as a non-linear technique and that the tuning parameter of Isomap can be quite critical.'`
+
+## Interpreting the output dimensions
+
+1. Using Isomap computed using 20 nearest neighbours, find the images corresponding to (i) the largest value of the first output dimension (ii) the smallest value of the second output dimension (iii) the largest value of the second output dimension. Judging, from this what may each output dimension represent?
+
+```{r, echo=sols,eval=sols,message=F}
+dfiso20<-tibble(cbind(isoout20@data@meta,isoout@data@data))
+parti<-arrange(dfiso,desc(`iso 1`))%>%head(1)%>%pull(Image)
+partii<-arrange(dfiso,`iso 2`)%>%head(1)%>%pull(Image)
+partiii<-arrange(dfiso,desc(`iso 2`))%>%head(1)%>%pull(Image)
+
+```
+
+`r if(sols) 'The image corresponding to the largest value of the first output dimension'`
+
+```{r, echo=FALSE,eval=sols,message=F}
+
+knitr::include_graphics(paste0('../../data/images/',parti))
+
+```
+
+`r if(sols) 'The image corresponding to the smallest value of the second output dimension'`
+
+```{r, echo=FALSE,eval=sols,message=F}
+
+knitr::include_graphics(paste0('../../data/images/',partii))
+
+```
+
+`r if(sols) 'The image corresponding to the largest value of the second output dimension'`
+
+```{r, echo=FALSE,eval=sols,message=F}
+
+knitr::include_graphics(paste0('../../data/images/',partiii))
+
+```
+
+`r if(sols) 'The first output dimension clearly corresponds to the scale of the image (larger values indicate a smaller A). The second output may correspond to the orientation of the letter A with higher values corresponding to a more vertical orientation and larger values corresponding to a more horizontal orientation.'`
+
+## Bonus Question
+
+1. Let $\mathbf{x}$ be a $p$-vector and $\tilde{\mathbf{X}}$ be a $p\times k$ matrix whose columns are the $k$ nearest neighbours of $\mathbf{x}$  
+
+Prove that the value of $\mathbf{w}$ that minimises
+
+$$||\mathbf{x}-\mathbf{w}'\tilde{\mathbf{X}}||_2^2$$
+
+subject to $\sum w_j=1$ is given by
+
+$$\mathbf{w}=\frac{\sum\limits_k \mathbf{C}^{-1}_{jk}}{\sum\limits_{k}\sum\limits_{l}\mathbf{C}^{-1}_{jk}}$$
+
+where $c_{jk}=||\mathbf{x}-\mathbf{x}_j||^2_2$ and $\mathbf{x}_j$ is a column of $\tilde{\mathbf{X}}$.
+
+2. Let $\mathbf{y}=(y_1,\dots,y_n)'$ be an $n$-vector. Show that 
+
+$$\sum\limits_{i}(y_i-\sum\limits_j w_{ij}y_j)^2$$
+
+is minimised subject to $\sum{y^2_i}=1$ by the eigenvector corresponding to the second smallest eigenvalue of $(\mathbf{I}-\mathbf{W})'(\mathbf{I}-\mathbf{W})$.
