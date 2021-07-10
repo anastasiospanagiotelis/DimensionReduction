@@ -31,15 +31,15 @@ In particular Chapter 7 (especially section 7.2), Chapter 13 and Chapter 16 prov
 
 ## Software
 
-All coding is done using [R](https://www.r-project.org/) and the packages of the [tidyverse](https://www.tidyverse.org/). Of tremendous use is the package dimRed by Guido Kraemer available on [CRAN](https://cran.r-project.org/web/packages/dimRed/index.html) and [Github](https://github.com/gdkrmr/dimRed).
+All coding is done using [R](https://www.r-project.org/) and the packages of the [tidyverse](https://www.tidyverse.org/). Of tremendous use is the package dimRed by Guido Kraemer available on [CRAN](https://cran.r-project.org/web/packages/dimRed/index.html) and [Github](https://github.com/gdkrmr/dimRed). The packages *broom*, *png* and *kpca* should also be installed if you want to work through the tutorials.
 
 ## Tutorials
 
-COMING SOON
+Tutorials are available on the [course website](https://anastasiospanagiotelis.netlify.app/teaching/dimred/). A single R markdown file generates a pdf both with and without solutions. Simply change line 17 to *Tutorial 1 Solutions* or *Tutorial 2 Solutions* if you need to generate the files with solutions, and anything else if you do not want solutions.
 
 ## Data
 
-Data can be found in the *data* folder.  The datasets are
+Data can be found in the *data* folder. They are also available on the [course website](https://anastasiospanagiotelis.netlify.app/teaching/dimred/).  The datasets are:
 
 - World Bank data on socioeconomic indicators (sourced from the [World Bank](https://data.worldbank.org/indicator))
 - Data from an Irish Smart meter trial (collected by Council for Energy Regulation, see Council for Energy Regulation, (2011), "Electricity smart metering customer behaviour trials", **Tech. Report**)
