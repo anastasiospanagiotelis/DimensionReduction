@@ -206,7 +206,7 @@ if(!(file.exists(paste0('../data/images/A',formatC(n,width = 4,flag='0'),'.png')
 
 # Irish smart meter data
 
-- Measure electricity usage at a half-hourly frequency over a two year period.
+- Measure electricity usage at a half-hourly frequency over a 1.5 year period.
 --
 
 - There are data for 3639 households.
