@@ -94,7 +94,7 @@ has the biggest possible variance.
 $\rightarrow$ arbitrarily big variance.
 --
 
-  + Constrain $\sum w_j=1$
+  + Constrain $\sum w^2_j=1$
 --
 
 - Sensitive to units of measurement.
