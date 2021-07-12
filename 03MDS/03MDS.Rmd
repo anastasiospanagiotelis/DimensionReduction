@@ -14,7 +14,7 @@ output:
       highlightLines: true
       countIncrementalSlides: false
     includes:
-      before_body: ../aux/defs.html
+      before_body: ../auxil/defs.html
 ---
 
 # Outline

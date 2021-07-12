@@ -196,8 +196,8 @@ wbPC&lt;-augment(pca,wb) #Add PCs to dataframe
 
 # Plot
 
-<div id="htmlwidget-74e75188974c2ce81791" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-74e75188974c2ce81791">{"x":{"url":"02PCA_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-aa18aec57ff5d755ed15" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-aa18aec57ff5d755ed15">{"x":{"url":"02PCA_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -230,7 +230,7 @@ class: middle, center, inverse
 --
 
 - Optimisation problem is
-`$$\underset{\bw}{argmax}\,\frac{1}{n-1}\bw'\bX'\bX\bw$$`
+`$$\underset{\bw}{\max}\,\frac{1}{n-1}\bw'\bX'\bX\bw$$`
 
 subject to `\(\bw'\bw=1\)`
 --
@@ -245,7 +245,7 @@ subject to `\(\bw'\bw=1\)`
 `$$\calL=\bw'\bS\bw-\lambda(\bw'\bw-1)$$`
 --
 
-- First order conditions
+- A first order condition is
 
 `$$\frac{\partial\calL}{\partial{\bw}}=2\bS\bw-2\lambda\bw$$`
 --

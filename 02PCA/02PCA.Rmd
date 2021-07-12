@@ -14,7 +14,7 @@ output:
       highlightLines: true
       countIncrementalSlides: false
     includes:
-      before_body: ../aux/defs.html
+      before_body: ../auxil/defs.html
 ---
 
 # Outline
@@ -227,7 +227,7 @@ class: middle, center, inverse
 --
 
 - Optimisation problem is
-$$\underset{\bw}{argmax}\,\frac{1}{n-1}\bw'\bX'\bX\bw$$
+$$\underset{\bw}{\max}\,\frac{1}{n-1}\bw'\bX'\bX\bw$$
 
 subject to $\bw'\bw=1$
 --
@@ -242,7 +242,7 @@ subject to $\bw'\bw=1$
 $$\calL=\bw'\bS\bw-\lambda(\bw'\bw-1)$$
 --
 
-- First order conditions
+- A first order condition is
 
 $$\frac{\partial\calL}{\partial{\bw}}=2\bS\bw-2\lambda\bw$$
 --

@@ -14,7 +14,7 @@ output:
       highlightLines: true
       countIncrementalSlides: false
     includes:
-      before_body: ../aux/defs.html
+      before_body: ../auxil/defs.html
 
 ---
 
@@ -426,7 +426,7 @@ graph_from_data_frame(dfe,directed = FALSE)%>%
 $$\bA\bv=\lambda\bv$$
 --
 
-- Pairs of $(\lambda,\bv)$ such that $\bv\neq 0$ that solve the above equation are known as *eigenvectors* and *eigenvalues* respectively.
+- Pairs of $(\lambda,\bv)$ such that $\bv\neq 0$ that solve the above equation are known as *eigenvalues* and *eigenvectors* respectively.
 --
 
 - Rank eigenvalues (and corresponding eigenvectors) in descending order
