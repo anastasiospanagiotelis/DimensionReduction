@@ -67,7 +67,7 @@ class: center, middle, inverse
 - As a rough idea consider including polynomials $x^2, x^3,x^4,\dots$ as well as cross products.
 --
 
-- In general, let $\Phi:\bbR^m\rightarrow\bbR^M$ where $P>p$ be a feature map.
+- In general, let $\Phi:\bbR^p\rightarrow\bbR^P$ where $P>p$ be a feature map.
 --
 
 - Rather than carry out principal components on $\bx$, carry out principal components on $\Phi(\bx)$
@@ -79,7 +79,7 @@ class: center, middle, inverse
 - Aren't we doing dimension reduction?
 --
 
-- Yes, however the idea is that a linear transformation can only reveal patterns if we transform to a higher dimension first.
+- Yes, however the idea is that a linear algorithm (like PCA) can only reveal patterns if we transform to a higher dimension first.
 --
 
 - Consider this example
@@ -258,13 +258,13 @@ class: inverse, middle, center
 - The standard way to do PCA is to solve the eigenvalue problem
 --
 
-$$\bC\bv=\lambda\bv$$
+$$\bS\bv=\lambda\bv$$
 --
 
 - This is equivalent to
 --
 
-$$\frac{1}{n}\bX'\bX\bv=\lambda\bv$$
+$$\frac{1}{n-1}\bX'\bX\bv=\lambda\bv$$
 - The principal components are given by $\bX\bv$ (not by $\bv$).
 
 ---
@@ -274,14 +274,14 @@ $$\frac{1}{n}\bX'\bX\bv=\lambda\bv$$
 - Take
 --
 
-$$\frac{1}{n}\bX'\bX\bv=\lambda\bv$$
+$$\frac{1}{n-1}\bX'\bX\bv=\lambda\bv$$
 --
 
 - Pre-multiply by $\bX$ and rearrange
 --
 
-$$\bX\bX'\bX\bv=n\lambda\bX\bv$$
-- Replace $\bX\bv$ with $\by$ and $n\lambda$ with $\tilde{\lambda}$
+$$\bX\bX'\bX\bv=(n-1)\lambda\bX\bv$$
+- Replace $\bX\bv$ with $\by$ and $(n-1)\lambda$ with $\tilde{\lambda}$
 --
 
 $$\bX\bX'\by=\tilde{\lambda}\by$$
@@ -319,7 +319,7 @@ rather than $\bX$ with rows $\bx_i$ you have a matrix with rows $\Phi(\bx_i)$.
 - Care must be taken to center $\bK$ by pre and post multiplying by the centering matrix $\bI-n^{-1}\iota\iota'$  
 --
 
-- Some sources will rescale the eigenvectors of $\bK$ by $n$ or $\lambda$.
+- Some sources will rescale the eigenvectors of $\bK$ by $n-1$ or $\lambda$.
 
 ---
 

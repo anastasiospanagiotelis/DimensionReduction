@@ -14,7 +14,7 @@ output:
 knit: (
   function(inputFile, encoding) { 
 
-    pSubTitle <- 'Tutorial 1 Solutions'
+    pSubTitle <- 'Tutorial 1'
 
     rmarkdown::render( 
       input       = inputFile, 
