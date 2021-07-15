@@ -106,7 +106,7 @@ where $\mathcal{N}_i$ is set of nearest neighbours of $\bx_i$
 
 $$||\bx_i-\sum\limits_{j\in \mathcal{N}_i} w_{ij}\bx_j||_2^2$$
 
--  Letting $\bC$ be a matrix where $\bC_{jk}=||\bx_i-\bx_j||^2_2$ the solution is
+-  Letting $\bC$ be a matrix where $\bC_{jk}=(\bx_i-\bx_j)'(\bx_i-\bx_k)$ the solution is
 
 $$\bw_j=\frac{\sum\limits_k \bC^{-1}_{jk}}{\sum\limits_{k}\sum\limits_{l}\bC^{-1}_{jk}}$$
 
