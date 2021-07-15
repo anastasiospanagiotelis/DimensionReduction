@@ -42,6 +42,7 @@ library(dimRed)
 library(rgl)
 library(ggrepel)
 library(microbenchmark)
+library(widgetframe)
 knit_hooks$set(webgl = hook_webgl)
 
 ```
@@ -137,7 +138,7 @@ close3d()
 
 # Isomap (K=20)
 
-```{r,echo=T,cache=TRUE}
+```{r,echo=T,cache=F}
 isoout20 <- embed(dat, "Isomap", knn = 20)
 plot(isoout20, type = "2vars")
 
@@ -147,7 +148,7 @@ plot(isoout20, type = "2vars")
 
 #Co-Ranking
 
-```{r,cache=TRUE}
+```{r,cache=F}
 library(coRanking)
 Q<-coranking(dat@data,isoout20@data@data,input_Xi = "data")
 imageplot(Q)
@@ -155,10 +156,10 @@ imageplot(Q)
 
 ---
 
-# Isomap (K=4)
+# Isomap (K=5)
 
-```{r,cache=TRUE,echo=T}
-isoout4 <- embed(dat, "Isomap", knn = 4)
+```{r,cache=F,echo=T}
+isoout4 <- embed(dat, "Isomap", knn = 5)
 plot(isoout4, type = "2vars")
 
 ```
@@ -167,7 +168,7 @@ plot(isoout4, type = "2vars")
 
 #Co-Ranking
 
-```{r,cache=TRUE}
+```{r,cache=F}
 library(coRanking)
 Q<-coranking(dat@data,isoout4@data@data,input_Xi = "data")
 imageplot(Q)
@@ -176,7 +177,7 @@ imageplot(Q)
 ---
 # Isomap (K=500)
 
-```{r,echo=T,cache=T}
+```{r,echo=T,cache=F}
 isoout500 <- embed(dat, "Isomap", knn = 500)
 plot(isoout500, type = "2vars")
 
@@ -186,7 +187,7 @@ plot(isoout500, type = "2vars")
 
 #Co-Ranking
 
-```{r,cache=TRUE}
+```{r,cache=F}
 library(coRanking)
 Q<-coranking(dat@data,isoout500@data@data,input_Xi = "data")
 imageplot(Q)
@@ -231,9 +232,8 @@ df%>%add_column(H=1:nrow(df),.before = 1)->df
 df%>%
   filter(H<500)%>%
   pivot_longer(-H,names_to='k',values_to='LCMC')%>%
-  ggplot(aes(x=H,y=LCMC,col=k))+geom_line()+scale_color_colorblind()->g
+  ggplot(aes(x=H,y=LCMC,col=k))+geom_line()+scale_color_colorblind()
 
-ggplotly(g)
 
 ```
 
