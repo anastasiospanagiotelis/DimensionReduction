@@ -1,6 +1,6 @@
 # Dimension Reduction
 
-These are notes and material from a course on Dimension Reduction given as part of the [Australian Mathematical Sciences Institute](https://amsi.org.au/) (AMSI) Winter School. 
+These are notes and material from a course on Dimension Reduction originally given as part of the Australian Mathematical Sciences Institute (AMSI) Winter School. 
 
 ## Lectures
 

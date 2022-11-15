@@ -14,7 +14,7 @@ output:
 knit: (
   function(inputFile, encoding) { 
 
-    pSubTitle <- 'Tutorial 2 Solutions'
+    pSubTitle <- 'Tutorial 3 and 4 Solutions'
 
     rmarkdown::render( 
       input       = inputFile, 
@@ -25,7 +25,7 @@ knit: (
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-sols=(params$sub_title=='Tutorial 2 Solutions')
+sols=(params$sub_title=='Tutorial 3 and 4 Solutions')
 ```
 
 ## Images Data - Cleaning

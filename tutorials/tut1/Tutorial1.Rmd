@@ -4,17 +4,17 @@ params:
     input: text
     label: Sub Title
     value: 'my_Sub_Title_and_File_Name'
-title    : "Dimension Reduction, AMSI 2021 Winter School"
+title    : "Dimension Reduction"
 subtitle : "`r params$sub_title`"
 author: 'Anastasios Panagiotelis'
-date: 'July 13, 2021'
+date: 'November 16-23, 2022'
 output:
   pdf_document:
     keep_tex: false
 knit: (
   function(inputFile, encoding) { 
 
-    pSubTitle <- 'Tutorial 1'
+    pSubTitle <- 'Tutorial 1 and 2 Solutions'
 
     rmarkdown::render( 
       input       = inputFile, 
@@ -25,7 +25,7 @@ knit: (
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-sols=(params$sub_title=='Tutorial 1 Solutions')
+sols=(params$sub_title=='Tutorial 1 and 2 Solutions')
 ```
 
 ## R Markdown
