@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: "Dimension Reduction:</br>MDS"
+title: "Dimension Reduction:</br>MDS"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:

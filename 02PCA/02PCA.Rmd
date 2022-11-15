@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: "Dimension Reduction:</br>PCA"
+title: "Dimension Reduction:</br>PCA"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:

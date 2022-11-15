@@ -13,9 +13,7 @@ code.r{ /* Code block */
   font-size: 200%;
 }
 
-.mjx-chtml{ font-size: 105% !important; }
-
-.MathJax {font-size: 105% !important;}
+.mjx-chtml{ font-size: 120%; }
 
 ol {
   list-style: none;
@@ -64,21 +62,24 @@ li::before {content: "\25AA";
   background-size: cover;
 }
 
-.title-slide > h1 {
+.title-slide h1 {
   color: #FFFFFF;
-  font-size: 50px;
+  font-size: 30px;
   margin-top: -225px;
-  margin-left: -24px;
+  text-align: left;
+  margin-left: -29px;
 }
 
-.title-slide > h2 {
+.title-slide h2 {
   color: #000000;
-  margin-left: -24px;
+  font-size: 25px;
+  margin-left: -29px;
 }
 
-.title-slide > h3 {
+.title-slide h3 {
   color: #000000;
-  margin-left: -24px;
+  font-size: 20px;
+  margin-left: -29px;
 }
 
 .title-slide .remark-slide-number {

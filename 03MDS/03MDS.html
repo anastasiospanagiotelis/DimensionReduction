@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>AMSI Winter  School 2021</title>
+    <title>Dimension Reduction:MDS</title>
     <meta charset="utf-8" />
     <meta name="author" content="Anastasios Panagiotelis" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <script src="libs/htmlwidgets/htmlwidgets.js"></script>
     <script src="libs/pymjs/pym.v1.js"></script>
@@ -15,10 +16,15 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# AMSI Winter </br> School 2021
-## Dimension Reduction:</br>MDS
+.title[
+# Dimension Reduction:</br>MDS
+]
+.author[
 ### Anastasios Panagiotelis
+]
+.institute[
 ### University of Sydney
+]
 
 ---
 
@@ -156,8 +162,8 @@ wb%&gt;%
 
 # Plot
 
-<div id="htmlwidget-ac88558013cf6f24218e" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ac88558013cf6f24218e">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b4eaff2a094c72df3db2" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b4eaff2a094c72df3db2">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -276,8 +282,8 @@ wb%&gt;%
 
 #Languages
 
-<div id="htmlwidget-43906f9a4dee27df08b0" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-43906f9a4dee27df08b0">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-693b1ad86111113032e5" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-693b1ad86111113032e5">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -302,8 +308,8 @@ wb%&gt;%
 
 # Distance between pdfs
 
-<div id="htmlwidget-dbdf2d07060303143424" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-dbdf2d07060303143424">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-7.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-61d52951d0282366fe17" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-61d52951d0282366fe17">{"x":{"url":"03MDS_files/figure-html//widgets/widget_unnamed-chunk-7.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 class: inverse, middle, center
@@ -496,6 +502,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

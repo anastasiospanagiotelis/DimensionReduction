@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: " Dimension Reduction:</br>Introduction"
+title: "Dimension Reduction:</br> Introduction"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:
@@ -25,19 +24,16 @@ knitr::opts_chunk$set(fig.align='center')
 
 # Housekeeping
 
-- Welcome to the AMSI Winter School course on dimension reduction!
+- Welcome to the course on dimension reduction!
 --
 
-- The course is made up of 10 "lectures" each taking about roughly 30-40 minutes.
+- The course is made up of 12 "lectures" and 4 tutorials each taking about roughly one hour.
 --
 
 - All materials are available on a [github repository](https://github.com/anastasiospanagiotelis/DimensionReduction).
 --
 
-- During the course we will communicate over the slack channel.
---
-
-- If you want to contact me after the Winter School you can find my details on my [personal website](https://anastasiospanagiotelis.netlify.app/).
+- If you want to contact me after the course you can find my details on my [personal website](https://anastasiospanagiotelis.netlify.app/).
 
 ---
 
@@ -316,10 +312,10 @@ class: inverse, center, middle
 - An important concept is the distance between two observations. A distance function satisfies four axioms
 --
 
-  + Symmetry
-  + Non-negativity
-  + Identity of indiscernibles
-  + Triangle inequality
+  + Symmetry $\delta_{ij}=\delta_{ji}$
+  + Non-negativity $\delta_{ij}\geq 0$
+  + Identity of indiscernibles $\delta_{ii}= 0$
+  + Triangle inequality $\delta_{ij}\leq \delta_{ik}+\delta_{kj}$
 --
 
 - Some functions that do not satisfy all of these axioms may also be considered.

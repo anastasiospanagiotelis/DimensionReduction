@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>AMSI Winter  School 2021</title>
+    <title>Dimension Reduction:PCA</title>
     <meta charset="utf-8" />
     <meta name="author" content="Anastasios Panagiotelis" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <script src="libs/htmlwidgets/htmlwidgets.js"></script>
     <script src="libs/pymjs/pym.v1.js"></script>
@@ -15,10 +16,15 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# AMSI Winter </br> School 2021
-## Dimension Reduction:</br>PCA
+.title[
+# Dimension Reduction:</br>PCA
+]
+.author[
 ### Anastasios Panagiotelis
+]
+.institute[
 ### University of Sydney
+]
 
 ---
 
@@ -196,8 +202,8 @@ wbPC&lt;-augment(pca,wb) #Add PCs to dataframe
 
 # Plot
 
-<div id="htmlwidget-aa18aec57ff5d755ed15" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-aa18aec57ff5d755ed15">{"x":{"url":"02PCA_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-ed832b205bd08ad227ef" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ed832b205bd08ad227ef">{"x":{"url":"02PCA_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -432,6 +438,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
