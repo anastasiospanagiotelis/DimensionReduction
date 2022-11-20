@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: "Dimension Reduction:</br>Kernel PCA"
+title: "Dimension Reduction:</br>Kernel PCA"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:
@@ -456,11 +455,10 @@ ggplot(df,aes(x=kPCA1,y=kPCA2,label=`Country Code`))+geom_text(size=2)
 - Only 10898 of these variable have any variation across the images.
 --
 
-- Lesson: Don't try a complicated dimension reduction technique when a simple one is better.
+- Run PCA and kPCA only on these variables.
 --
 
-- For these variables run PCA and kPCA.
-
+- Lesson: Don't try a complicated dimension reduction technique when a simple one is better.
 
 ---
 

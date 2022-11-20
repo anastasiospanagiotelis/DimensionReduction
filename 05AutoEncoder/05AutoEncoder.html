@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>AMSI Winter  School 2021</title>
+    <title>Dimension Reduction:Autoencoders</title>
     <meta charset="utf-8" />
     <meta name="author" content="Anastasios Panagiotelis" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/mtheme.css" type="text/css" />
     <link rel="stylesheet" href="../css/mod.css" type="text/css" />
@@ -12,10 +13,15 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# AMSI Winter </br> School 2021
-## Dimension Reduction:</br>Autoencoders
+.title[
+# Dimension Reduction:</br>Autoencoders
+]
+.author[
 ### Anastasios Panagiotelis
+]
+.institute[
 ### University of Sydney
+]
 
 ---
 
@@ -62,7 +68,7 @@ MathJax.Hub.Config({
 - Neural Network
 --
 
-  + For a course on Neural Networks see the course in this Winter School by Susan Wei and Robert Salomone.
+  + An entire course could be done on neural networks, I will give only the basic idea.
 --
 
 - Idea behind Autoencoder
@@ -242,6 +248,9 @@ class:inverse, middle, center
 --
 
   + Can be a bit time consuming and tricky.
+--
+
+  + For autoencoders probably better to use Python.
 
 ---
 
@@ -263,6 +272,7 @@ class:inverse, middle, center
 class: inverse, middle, center
 
 # Questions?
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
@@ -311,6 +321,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

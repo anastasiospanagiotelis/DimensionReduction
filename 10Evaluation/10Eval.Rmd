@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: "Dimension Reduction</br>Evaluation"
+title: "Dimension Reduction</br>Evaluation"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:
@@ -63,10 +62,10 @@ class: center, middle, inverse
   + Different Algorithms (e.g. Isomap v LLE).
 --
 
-  + Different tuning parameters for a given algorithm (e.g. number of nearest neighbours.
+  + Different tuning parameters for a given algorithm (e.g. number of nearest neighbours).
 --
 
-  + Different number of output dimensions (choose $d$).
+  + Different output dimension (choose $d$).
 --
 
 - Also is the output accurate in some 'absolute' sense?

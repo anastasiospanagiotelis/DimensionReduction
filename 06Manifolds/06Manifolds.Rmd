@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: "Dimension Reduction</br>Manifolds"
+title: "Dimension Reduction</br>Manifolds"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:

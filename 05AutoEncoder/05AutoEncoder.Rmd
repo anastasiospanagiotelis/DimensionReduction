@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: "Dimension Reduction:</br>Autoencoders"
+title: "Dimension Reduction:</br>Autoencoders"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:
@@ -22,7 +21,7 @@ output:
 - Neural Network
 --
 
-  + For a course on Neural Networks see the course in this Winter School by Susan Wei and Robert Salomone.
+  + An entire course could be done on neural networks, I will give only the basic idea.
 --
 
 - Idea behind Autoencoder
@@ -235,6 +234,9 @@ plotnet(ae,bias=FALSE,node_labs=FALSE,nid=FALSE)
 --
 
   + Can be a bit time consuming and tricky.
+--
+
+  + For autoencoders probably better to use Python.
 
 ---
 

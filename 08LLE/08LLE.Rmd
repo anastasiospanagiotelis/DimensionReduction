@@ -1,6 +1,5 @@
 ---
-title: "AMSI Winter </br> School 2021"
-subtitle: "Dimension Reduction</br>LLE"
+title: "Dimension Reduction</br>LLE"
 author: "Anastasios Panagiotelis"
 institute: "University of Sydney"
 output:
@@ -317,32 +316,37 @@ plot(isoout, type = "2vars")
 
 ---
 
+# Implementation
+
+- Up until June, there was a package called `LLE` that could be called using `dimRed`.
+--
+
+- This package has been removed from CRAN.
+--
+
+- The following images were produced using that package, but calling from `dimRed` will no longer work.
+--
+
+- An archived version of the `LLE` package can still be installed and used.
+
+---
+
 # LLE (K=20)
 
 
-```{r,echo=TRUE,message=FALSE,warning=FALSE,results=FALSE,cache=TRUE}
-lleout <- embed(dat, "LLE", knn = 20)
-plot(lleout, type = "2vars")
-```
+![](img/LLE20.png)
 
 ---
 
 # LLE (K=30)
 
-
-```{r,echo=TRUE,message=FALSE,warning=FALSE,results=FALSE,cache=TRUE}
-lleout <- embed(dat, "LLE", knn = 30)
-plot(lleout, type = "2vars")
-```
+![](img/LLE30.png)
 
 ---
 # LLE (K=40)
 
 
-```{r,echo=TRUE,message=FALSE,warning=FALSE,results=FALSE,cache=TRUE}
-lleout <- embed(dat, "LLE", knn = 40)
-plot(lleout, type = "2vars")
-```
+![](img/LLE40.png)
 
 
 ---
