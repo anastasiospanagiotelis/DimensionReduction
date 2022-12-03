@@ -1,0 +1,103 @@
+---
+title: "Dimension Reduction</br>t SNE"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../auxil/defs.html
+---
+
+#Outline
+
+- Algorithm
+--
+
+- Applications
+--
+
+- Reference is Van der Maaten, L., & Hinton, G. (2008). Visualizing data using t-SNE. *Journal of Machine Learning Research*, **9(11)**.
+
+```{r setup, include=FALSE,message=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center',echo=FALSE,message = FALSE,out.height = 450)
+
+library(gifski)
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(dimRed)
+library(rgl)
+library(ggrepel)
+library(microbenchmark)
+knit_hooks$set(webgl = hook_webgl)
+
+```
+
+---
+
+class: center, middle, inverse
+
+# Go for a walk
+
+---
+
+# Interpoint probabilities
+
+---
+
+---
+
+class: middle, inverse, center
+
+#Implementation
+
+---
+
+# Swiss Roll
+
+```{r,echo=T,eval=F}
+datsr <- loadDataSet("Swiss Roll")
+plot(datsr,type='3varsrgl')
+
+```
+
+```{r,echo=F,webgl=TRUE}
+
+datsr <- loadDataSet("Swiss Roll")
+invisible(open3d())
+plot(datsr,type='3varsrgl')
+rglwidget()
+close3d()
+
+
+```
+
+---
+
+# tSNE
+
+```{r,echo=T}
+leoutsr <- embed(datsr, "tSNE")
+plot(leoutsr, type = "2vars")
+
+```
+
+---
+
+# Pros and Cons
+
+- Advantages
+  + Fast 
+--
+
+- Disadvantages
+  + Creates clusters even where they do not exist.

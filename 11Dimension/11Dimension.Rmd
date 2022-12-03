@@ -1,0 +1,56 @@
+---
+title: "Dimension Reduction</br>Determining Dimension"
+author: "Anastasios Panagiotelis"
+institute: "University of Sydney"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"../css/mtheme.css","../css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      before_body: ../auxil/defs.html
+---
+
+#Outline
+
+- Spheres
+--
+
+- Applications
+--
+
+- Reference is Facco, E., d’Errico, M., Rodriguez, A., & Laio, A. (2017). Estimating the intrinsic dimension of datasets by a minimal neighborhood information. *Scientific reports*, **7(1)**, 1-8.
+
+```{r setup, include=FALSE,message=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.align='center',echo=FALSE,message = FALSE,out.height = 450)
+
+library(gifski)
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(dimRed)
+library(rgl)
+library(ggrepel)
+library(microbenchmark)
+knit_hooks$set(webgl = hook_webgl)
+
+```
+
+---
+
+class: center, middle, inverse
+
+# What is dimensions
+
+---
+
+# Lengths and volumes
+
+---
+
