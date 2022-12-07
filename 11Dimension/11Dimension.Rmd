@@ -37,6 +37,7 @@ library(ggthemes)
 library(dimRed)
 library(rgl)
 library(ggrepel)
+library(plotrix)
 library(microbenchmark)
 knit_hooks$set(webgl = hook_webgl)
 
@@ -46,11 +47,192 @@ knit_hooks$set(webgl = hook_webgl)
 
 class: center, middle, inverse
 
-# What is dimensions
+# What is dimension
 
 ---
 
 # Lengths and volumes
 
+- Consider a 1-D 'ball'.
+--
+
+- This is just a line.
+--
+
+- What is the measure of a 1-D ball?
+--
+
+  + The measure is length and is $2r$ where $r$ is the radius.
+--
+
+- What happens the the measure if we double radius of the 1-D ball? 
+
 ---
 
+
+# In 2-D
+
+- Consider a 2-D 'ball'.
+--
+
+- What is the measure of a 2-D ball?
+--
+
+  + The measure is area and is $\pi r^2$ where $r$ is the radius.
+--
+
+- What happens the the measure if we double the radius of the 2-D ball? 
+--
+
+  + Measure scaled up by $2^2=4$.
+
+---
+
+
+# In 3-D
+
+- Consider a 3-D 'ball'.
+--
+
+- What is the measure of a 3-D ball?
+--
+
+  + The measure is volume and is $\frac{4}{3}\pi r^3$ where $r$ is the radius.
+--
+
+- What happens the the measure if we double the radius of the 3-D ball? 
+--
+
+  + Measure scaled up by $2^3=8$.
+
+---
+
+# Why does this matter?
+
+- Consider the nearest neighbour and second nearest neighbour of a point.
+--
+
+- Consider a ball around the second nearest neighbor
+```{r,fig.height=6}
+plot(0,0,col='red',ylim=c(-1,1),pch=20,cex=3,xlim=c(-1,1),ylab='',xlab='',asp=1)
+points(0.6,0.8,col='blue',pch=20,cex=3)
+points(0.3,-0.4,col='black',pch=20,cex=3)
+draw.circle(0,0,1)
+```
+---
+
+
+# Why does this matter?
+
+- Consider the nearest neighbour and second nearest neighbour of a point.
+- Consider a ball around the second nearest neighbor
+```{r,fig.height=6}
+plot(0,0,col='red',ylim=c(-1,1),pch=20,cex=3,xlim=c(-1,1),ylab='',xlab='',asp=1)
+points(0.6,0.8,col='blue',pch=20,cex=3)
+points(0.3,-0.4,col='black',pch=20,cex=3)
+lines(c(0,0.6),c(0,0.8),col='blue')
+lines(c(0,0.3),c(0,-0.4))
+draw.circle(0,0,1)
+draw.circle(0,0,0.5,lty = 3)
+```
+
+---
+
+# Questions
+
+- In the previous example, the ratio of the distance to the second nearest neighbour to distance to the nearest neighbour is 2.
+--
+
+- What is the probability that this ratio is greater than 2?
+--
+
+- To answer calculate area of inner circle and divide by outer circle.
+--
+
+- It is 0.25.
+--
+
+- How would your answer change if it was a 3D ball?
+
+---
+
+# Determine dimension
+
+- For each point find the ratio of the second nearest neighbour to the nearest neighbour (denoted $\mu$)
+- These follow a Pareto(1,d) distribution. The MLE is given by
+
+$$\hat{d}=\frac{n-1}{\sum\limits_{i=1}^{n} log \mu_i}$$
+---
+
+# Code
+
+```{r,echo=T}
+data<-loadDataSet("Swiss Roll")
+dd<-as.matrix(dist(data@data))
+dr<-apply(dd,2,sort)
+mu<-dr[3,]/dr[2,]
+dhat<-(length(mu)-1)/sum(log(mu))
+dhat
+```
+
+---
+
+#Helix
+
+```{r,webgl=T}
+t<-runif(1000)*20
+x<-cos(t)
+y<-sin(t)
+z<-t
+plot3d(x,y,z)
+```
+
+
+---
+
+# Helix
+
+```{r,echo=T}
+data<-cbind(x,y,z)
+dd<-as.matrix(dist(data))
+dr<-apply(dd,2,sort)
+mu<-dr[3,]/dr[2,]
+dhat<-(length(mu)-1)/sum(log(mu))
+dhat
+```
+
+---
+
+#Noisy Helix
+
+```{r, webgl=T}
+data<-loadDataSet("variable Noise Helix")
+plot(data,type='3varsrgl')
+```
+
+---
+
+# Code
+
+```{r,echo=T}
+dd<-as.matrix(dist(data@data))
+dr<-apply(dd,2,sort)
+mu<-dr[3,]/dr[2,]
+dhat<-(length(mu)-1)/sum(log(mu))
+dhat
+```
+
+---
+
+# Conclusions
+
+- The intrinsic dimension can be estimated using nothing more than nearest neighbour information.
+--
+
+- Can be generalised to include more than 2 NN
+--
+
+- Good idea to trim large values of the ratio of NN.
+--
+
+- Method is not robust if too much noise is added.

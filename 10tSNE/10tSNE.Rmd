@@ -18,7 +18,14 @@ output:
 
 #Outline
 
-- Algorithm
+- Stochastic Neighbourhood Embedding(SNE)
+--
+
+- Why t-SNE?
+--
+
+  - High dimensional space
+  - Outliers
 --
 
 - Applications
@@ -38,6 +45,7 @@ library(dimRed)
 library(rgl)
 library(ggrepel)
 library(microbenchmark)
+library(plotrix)
 knit_hooks$set(webgl = hook_webgl)
 
 ```
@@ -46,13 +54,171 @@ knit_hooks$set(webgl = hook_webgl)
 
 class: center, middle, inverse
 
-# Go for a walk
+# SNE
 
 ---
 
-# Interpoint probabilities
+# Jumping
+
+- Consider that you are currently at point $i$
+--
+
+- You would like to 'jump' to another point.
+--
+
+- While the jump is random, you should jump to nearby points with higher probability.
 
 ---
+
+# A Distribution
+
+- Let probability of a jump from point $i$ to point $j$ be given by
+--
+
+$$q_{j|i}\propto exp(-||\pmb{x}_i-\pmb{x}_j||/2\sigma_i)$$
+--
+
+- Since there are a discrete number of points these probabilities can be normalised to sum to one.
+
+---
+
+# Determining $\sigma_i$
+
+Find $\sigma_i$ for each $i$ so that the perplexity
+
+$$2^{\sum_{j\neq i}-p_{j|i}\log_2p_{j|i}}$$
+is fixed at a value (usually between 5 and 50)
+--
+
+This allows $\sigma$ to vary with the density of points around $\pmb{x}_i$. 
+
+---
+
+# Output space
+
+- Consider a low dimensional representation $\pmb{y}_i$ of point $i$
+--
+
+- A jumping distribution can be defined in a similar way 
+--
+
+$$q_{j|i}\propto exp(-||\pmb{y}_i-\pmb{y}_j||)$$
+--
+
+Note there is no $\sigma_i$ here.
+---
+# A Good Representation
+
+- Representation is accurate if $p_{j|i}$ are similar to $q_{j|i}$
+- Find $\pmb{y}_i$ to minimise KL divergence between input and output 'jumping' distributions
+--
+
+$$\min \sum_i\sum_{j\neq i}p_{j|i}\ln\left(\frac{p_{j|i}}{q_{j|i}}\right)$$
+
+---
+class: middle, inverse, center
+
+# Problems with SNE
+
+---
+
+# Outliers
+
+- For an outlier, $p_{j|i}$ will be small for all $j$.
+--
+
+- This means that there is little contribution from outliers to the cost function 
+--
+
+- The position of $\pmb{y}_i$ is therefore not well defined if $\pmb{x}_i$ is an outlier.
+--
+
+- Numerical instability in optimising KL divergence (usually by gradient descent) can occur
+
+---
+
+# Solution
+
+Consider a symmetric version of the problem where
+
+$$p_{ij}=\frac{p_{i|j}+p_{j|i}}{2n}$$
+
+And then optimise a single KL divergence over pairs of points
+
+$$\min\sum\limits_{i,j}p_{ij}\ln\left(\frac{p_{ij}}{q_{ij}}\right)$$
+This solves the problem with outliers.
+
+---
+
+# How big is 1D space?
+
+```{r}
+plot(seq(-1,1,1),rep(0,3),col='orange',lwd=3,type="l",xlab='',ylab='',asp=1)
+lines(seq(-0.8,0.8,0.8),rep(0,3),col='black',lwd=3,type="l",xlab='',ylab='')
+
+
+```
+
+Black area 4 times larger than orange area
+
+---
+
+# How big is 2D space
+
+```{r}
+plot(seq(-1,1,1),rep(0,3),col='orange',lwd=3,type="l",xlab='',ylab='',asp=1,ylim=c(-1,1))
+draw.circle(0,0,1,col='orange')
+draw.circle(0,0,0.8,col='black')
+```
+
+Black area 1.778 times larger than orange area
+
+---
+
+
+# How big is 3D space
+
+```{r,webgl=T}
+x<-matrix(runif(30000),10000,3)*2-1
+sumx<-sqrt(apply(x^2,1,sum))
+y<-x[(sumx<1),]
+sumy<-sqrt(apply(y^2,1,sum))
+cl<-rep('black',length(y))
+cl[sumy>0.8]<-'orange'
+rgl::plot3d(y[,1],y[,2],y[,3],col=cl)
+```
+
+Orange and black areas roughly equal
+
+---
+
+# Consequences
+
+- In all above plots all black/orange points were within a certain radius of the center.
+- As the dimension grows there is relatively more **volume** in the orange region.
+- When reducing dimension points in a large volume need to be mapped to a smaller volume.
+- This causes points to collapse together.
+
+---
+
+# Fixing this issue
+
+- Moderately distant input points need to be mapped to more distant output points
+- One way to achieve this is to use a different function for jump probabilities in the output space only
+--
+
+$$q_{j|i}=\propto(1+||\pmb{y}_i-\pmb{y}_j||)^{-1}$$
+--
+
+This is the kernel of the t-distribution with one degree of freedom. Hence the name t-SNE
+
+---
+
+# Explanation
+
+- Moderately close input points need to be mapped to points that are far apart in the output space
+- One way to get the $p_{ij}$ for such points closer to the corresponding $q_{ij}$ is to assume a heavier tailed kernel.
+- This avoids points collapsing together.
 
 ---
 
@@ -67,18 +233,14 @@ class: middle, inverse, center
 ```{r,echo=T,eval=F}
 datsr <- loadDataSet("Swiss Roll")
 plot(datsr,type='3varsrgl')
-
 ```
 
 ```{r,echo=F,webgl=TRUE}
-
 datsr <- loadDataSet("Swiss Roll")
 invisible(open3d())
 plot(datsr,type='3varsrgl')
 rglwidget()
 close3d()
-
-
 ```
 
 ---
@@ -86,18 +248,40 @@ close3d()
 # tSNE
 
 ```{r,echo=T}
-leoutsr <- embed(datsr, "tSNE")
-plot(leoutsr, type = "2vars")
+tsneout <- embed(datsr, "tSNE")
+plot(tsneout, type = "2vars")
 
 ```
 
 ---
 
+# Perplexity = 10
+
+```{r,echo=T}
+tsneout <- embed(datsr, "tSNE", perplexity=10)
+plot(tsneout, type = "2vars")
+
+```
+
+---
+
+
+# Perplexity = 100
+
+```{r,echo=T}
+tsneout <- embed(datsr, "tSNE", perplexity=100)
+plot(tsneout, type = "2vars")
+
+```
+
+---
 # Pros and Cons
 
 - Advantages
   + Fast 
+  + Robust
 --
 
 - Disadvantages
   + Creates clusters even where they do not exist.
+  + Generally introduces distortion
